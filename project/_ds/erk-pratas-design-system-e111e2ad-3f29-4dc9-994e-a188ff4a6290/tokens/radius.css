@@ -1,0 +1,10 @@
+:root{
+  --r:14px;        /* card, tile, faixa, banner, CTA */
+  --r-s:10px;      /* pílula da nav, linha de resultado, ícone-botão */
+  --r-tag:5px;     /* tag sobre a foto */
+  --r-hero:22px;   /* bloco do hero */
+  --r-fig:16px;    /* foto dentro do hero */
+  --r-sheet:20px;  /* painel que sobe */
+  --r-pill:980px;  /* botão, busca, chip, selo */
+  --r-fig-s:8px;   /* miniatura de resultado */
+}

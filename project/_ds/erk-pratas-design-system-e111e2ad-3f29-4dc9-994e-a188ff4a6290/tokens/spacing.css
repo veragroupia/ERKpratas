@@ -1,0 +1,29 @@
+/* ---------------------------------------------------------------
+   Espaço e medida. --pad é a margem lateral única de todo o site;
+   --max trava a linha em 1360px. Seções respiram com --sec-y.
+   --------------------------------------------------------------- */
+:root{
+  --e-1:2px; --e-2:4px; --e-3:6px; --e-4:8px; --e-5:10px; --e-6:12px; /* @kind spacing */
+  --e-7:14px; --e-8:16px; --e-9:18px; --e-10:20px; --e-11:22px; /* @kind spacing */
+  --e-12:24px; --e-13:26px; --e-14:32px; --e-15:40px; /* @kind spacing */
+
+  --max:1360px; /* @kind spacing */
+  --pad:clamp(16px,3.4vw,44px); /* @kind spacing */
+  --sec-y:clamp(38px,5.4vw,72px); /* @kind spacing */
+  --sec-cab:clamp(20px,2.6vw,32px); /* @kind spacing */
+  --gap-grade:clamp(12px,1.5vw,22px); /* @kind spacing */
+  --gap-tiles:clamp(10px,1.2vw,16px); /* @kind spacing */
+  --pad-hero:clamp(28px,4.4vw,58px); /* @kind spacing */
+  --pad-bloco:clamp(24px,3vw,40px); /* @kind spacing */
+
+  /* alturas fixas */
+  --h-header:74px; /* @kind spacing */
+  --h-header-mob:62px; /* @kind spacing */
+  --h-busca:46px; /* @kind spacing */
+  --h-btn:46px; /* @kind spacing */
+  --h-btn-sm:38px; /* @kind spacing */
+  --h-btn-full:42px; /* @kind spacing */
+  --h-barra:62px; /* @kind spacing */
+  --alvo-toque:44px; /* @kind spacing */
+  --safe:env(safe-area-inset-bottom,0px); /* @kind spacing */
+}

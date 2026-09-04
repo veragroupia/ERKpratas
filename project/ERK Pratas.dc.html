@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./ds-base.js"></script>
+<script>document.documentElement.setAttribute('data-theme','dark');</script>
+<style>
+body{background:var(--surface-pagina);color:var(--text-1)}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--text-1)}
+@media (max-width:860px){body{padding-bottom:var(--safe)}}
+@keyframes erkEntra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes erkCoracao{0%{transform:scale(1)}32%{transform:scale(1.42)}62%{transform:scale(.92)}100%{transform:scale(1)}}
+.erk-btn{position:relative;isolation:isolate;transition:background 180ms cubic-bezier(.28,0,.12,1),color 180ms cubic-bezier(.28,0,.12,1),border-color 180ms cubic-bezier(.28,0,.12,1),box-shadow 180ms cubic-bezier(.28,0,.12,1),transform 120ms cubic-bezier(.28,0,.12,1)}
+/* fio de luz na aresta de cima — a marca de acabamento do sistema */
+.erk-btn::before{content:"";position:absolute;left:14%;right:14%;top:0;height:1px;border-radius:980px;opacity:0;background:linear-gradient(90deg,transparent,rgba(242,244,247,.7),transparent);transition:opacity 180ms cubic-bezier(.28,0,.12,1),left 260ms cubic-bezier(.28,0,.12,1),right 260ms cubic-bezier(.28,0,.12,1);pointer-events:none}
+.erk-btn.erk-btn:hover::before{opacity:1;left:6%;right:6%}
+.erk-btn--p.erk-btn--p::before{background:linear-gradient(90deg,transparent,rgba(13,15,18,.28),transparent)}
+/* secundário: a borda acende e o fundo sobe um degrau */
+.erk-btn--s.erk-btn--s:hover{background:var(--surface-forte);border-color:var(--text-2)}
+/* primário: anel de punção em vez de cor nova */
+.erk-btn--p.erk-btn--p:hover{box-shadow:0 0 0 1px var(--surface-pagina),0 0 0 2px rgba(242,244,247,.42)}
+.erk-btn--a.erk-btn--a:hover{box-shadow:0 0 0 1px var(--surface-pagina),0 0 0 2px var(--acao-acento-bg)}
+.erk-btn.erk-btn:active{transform:translateY(1px)}
+.erk-btn.erk-btn:active::before{opacity:.5}
+.erk-chip,.erk-tile,.erk-card{position:relative}
+.erk-cardclick .erk-card,.erk-cardclick .erk-card__b{cursor:pointer}
+.erk-chip{transition:border-color 180ms cubic-bezier(.28,0,.12,1),background 180ms cubic-bezier(.28,0,.12,1),letter-spacing 180ms cubic-bezier(.28,0,.12,1)}
+.erk-chip:hover{letter-spacing:.02em}
+.erk-tile{transition:background 220ms cubic-bezier(.28,0,.12,1),border-color 220ms cubic-bezier(.28,0,.12,1);overflow:hidden}
+.erk-tile.erk-tile:hover{transform:none;box-shadow:none;background:var(--surface-forte);border-color:var(--border-2)}
+.erk-tile__fig{transition:transform 320ms cubic-bezier(.28,0,.12,1),box-shadow 320ms cubic-bezier(.28,0,.12,1)}
+.erk-tile.erk-tile:hover .erk-tile__fig{transform:scale(1.07);box-shadow:0 0 0 1px rgba(242,244,247,.26)}
+.erk-tile::before{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(242,244,247,.66),transparent);transform:scaleX(0);transition:transform 320ms cubic-bezier(.28,0,.12,1)}
+.erk-tile:hover::before{transform:scaleX(1)}
+@media (prefers-reduced-motion:reduce){.erk-tile:hover .erk-tile__fig{transform:none}.erk-tile:hover::before{transform:none}}
+@media (prefers-reduced-motion:reduce){.erk-btn::before{transition:none}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important}}
+</style>
+</helmet>
+<div style="background:var(--surface-pagina);color:var(--text-1);font-family:var(--font-body);min-height:100vh">
+
+<sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ true }}">
+<x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.Header" itens-sacola="{{ nSacola }}" busca="{{ q }}" on-busca="{{ setQ }}" on-submit-busca="{{ irBusca }}" hint-size="100%,74px"></x-import>
+<nav class="erk-catnav" aria-label="Navegação">
+  <div style="max-width:var(--max);margin-inline:auto;padding:10px var(--pad);display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+    <a href="#/home" class="{{ clsNavHome }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20H4z"></path><path d="M9.5 20v-5.5h5V20"></path></svg>Início</a>
+    <a href="#/catalogo" class="{{ clsNavEstoque }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.4"></rect><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"></rect><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"></rect><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4"></rect></svg>Ver o estoque</a>
+    <a href="#/montar" class="{{ clsNavMontar }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-3 3-6-6z"></path><path d="M11 7L4 14l3 3 7-7"></path></svg>Montar a sua peça</a>
+    <a href="#/catalogo/ofertas" class="{{ clsNavOfertas }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S3.5 15 3.5 9.2A4.7 4.7 0 0 1 12 6.6a4.7 4.7 0 0 1 8.5 2.6C20.5 15 12 20.5 12 20.5Z"></path></svg>Ofertas</a>
+  </div>
+</nav>
+</sc-if>
+
+<sc-if value="{{ headerMobile }}" hint-placeholder-val="{{ false }}">
+<div style="{{ estiloTopoMobile }}">
+  <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:46px;padding:0 6px;border-radius:980px;background:var(--surface-forte);border:1px solid var(--border-1);color:var(--text-1);box-shadow:0 10px 30px rgba(0,0,0,.45)">
+    <span style="display:flex;align-items:center">
+      <button type="button" onClick="{{ abrirMenu }}" aria-label="Abrir o menu" style="width:40px;height:40px;display:grid;place-items:center;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="width:21px;height:21px"><path d="M4 7.5h16M4 12h16M4 16.5h11"></path></svg></button>
+    </span>
+    <a href="#/home" style="display:grid;place-items:center;padding:0 6px;color:inherit">
+      <b style="font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:.2em;line-height:1;white-space:nowrap">ERK PRATAS</b>
+    </a>
+    <span style="display:flex;align-items:center;justify-content:flex-end">
+      <a href="#/busca" aria-label="Buscar" style="width:40px;height:40px;display:grid;place-items:center;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></a>
+      <a href="#/sacola" aria-label="Sacola" style="position:relative;width:40px;height:40px;display:grid;place-items:center;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M6 8h12l-1 12H7z"></path><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"></path></svg><sc-if value="{{ temSacolaTopo }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;right:5px;min-width:17px;height:17px;padding:0 4px;border-radius:980px;background:var(--acao-acento-bg);color:#fff;font-size:10.5px;font-weight:600;display:grid;place-items:center">{{ nSacola }}</span></sc-if></a>
+    </span>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ topoFixo }}" hint-placeholder-val="{{ false }}">
+<div style="height:60px"></div>
+</sc-if>
+
+<sc-if value="{{ ctxMobile }}" hint-placeholder-val="{{ false }}">
+<div style="{{ estiloCtx }}">
+  <div style="max-width:var(--max);margin-inline:auto;padding:8px var(--pad);display:flex;align-items:center;gap:10px">
+    <button type="button" onClick="{{ voltar }}" aria-label="Voltar" style="flex:none;width:44px;height:44px;margin-left:-10px;display:grid;place-items:center;color:var(--text-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:21px;height:21px"><path d="M15 5l-7 7 7 7"></path></svg></button>
+    <span style="flex:1;min-width:0;display:grid;gap:1px">
+      <b style="font-family:var(--font-display);font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ tituloTela }}</b>
+      <em style="font-style:normal;font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ subTela }}</em>
+    </span>
+    <a href="#/home" style="flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--text-3);margin-right:-10px" aria-label="Início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 10.5L12 4l8 6.5V20H4z"></path><path d="M9.5 20v-5.5h5V20"></path></svg></a>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ ehHome }}" hint-placeholder-val="{{ true }}">
+<main data-screen-label="Home">
+  <sc-if value="{{ heroMobile }}" hint-placeholder-val="{{ false }}">
+  <section style="padding:0 var(--pad)">
+    <div style="position:relative;margin-top:-56px;min-height:calc(100vh - 12px);border-radius:22px;overflow:hidden;display:flex;align-items:flex-end">
+      <div role="img" aria-label="Homem usando corrente cubana de prata 925" style="{{ estiloHeroFoto }}"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,15,18,.34) 0%,rgba(13,15,18,0) 22%,rgba(13,15,18,.06) 46%,rgba(13,15,18,.86) 100%)"></div>
+      <div style="position:relative;width:100%;padding:0 22px 26px;display:grid;gap:12px">
+        <span style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(242,244,247,.74)">Coleção masculina · prata 925</span>
+        <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(25px,6.6vw,32px);line-height:1.14;letter-spacing:0;color:#F2F4F7;text-wrap:balance">Corrente cubana a partir de <span style="color:var(--text-oferta)">R$ 231</span></h1>
+        <p style="font-size:13.5px;line-height:1.5;color:rgba(242,244,247,.78);max-width:30ch;text-wrap:pretty">Punção gravado, fecho gaveta reforçado e garantia vitalícia.</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:6px">
+          <a class="erk-btn" href="#/catalogo" style="flex:1 1 130px;min-width:0;background:rgba(13,15,18,.62);border:1px solid rgba(242,244,247,.34);color:#F2F4F7;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;white-space:nowrap;backdrop-filter:blur(8px)" style-hover="background:rgba(13,15,18,.74);border-color:rgba(242,244,247,.72)">Ver o catálogo</a>
+          <a class="erk-btn" href="#/montar" style="flex:1 1 130px;min-width:0;background:rgba(13,15,18,.62);border:1px solid rgba(242,244,247,.34);color:#F2F4F7;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;white-space:nowrap;backdrop-filter:blur(8px)" style-hover="background:rgba(13,15,18,.74);border-color:rgba(242,244,247,.72)">Montar a minha</a>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(242,244,247,.16)">
+          <sc-for list="{{ provas }}" as="p" hint-placeholder-count="3"><span style="flex:1 1 0;min-width:0;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(242,244,247,.6);text-align:center">{{ p.texto }}</span></sc-for>
+        </div>
+      </div>
+    </div>
+    <a href="#/catalogo" style="display:flex;align-items:center;justify-content:center;gap:9px;padding:16px 0 4px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3)">Deslize para ver as peças<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;transform:rotate(90deg)"><path d="M9 6l6 6-6 6"></path></svg></a>
+  </section>
+  </sc-if>
+  <sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ true }}">
+  <section style="padding:clamp(20px,3vw,34px) 0 0">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.Hero" selo="Coleção masculina" titulo="Corrente cubana a partir de" destaque="R$ 231" sub="Prata 925 legítima, com punção gravado e fecho gaveta reforçado. Feita na nossa oficina em Salto e enviada para todo o Brasil." foto="{{ fotoHero }}" foto-alt="Homem usando corrente cubana de prata 925" preco-rotulo="Corrente cubana 60 cm" preco="R$ 231,00" preco-antigo="R$ 289,00" provas="{{ provas }}" acao="Ver o catálogo" acao-href="#/catalogo" acao-sec="Montar a minha peça" acao-sec-href="#/montar" pontos="{{ tres }}" hint-size="100%,468px"></x-import>
+    </div>
+  </section>
+  </sc-if>
+
+  <section class="erk-sec">
+    <div class="erk-wrap">
+      <sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ true }}">
+        <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="Comprar por categoria" apoio="16 peças de prata 925, todas com punção e garantia vitalícia" link="Ver tudo" link-href="#/catalogo" hint-size="100%,60px"></x-import>
+      </sc-if>
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.CategoryTiles" hint-size="100%,150px"><sc-for list="{{ cats }}" as="c" hint-placeholder-count="6"><x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.CategoryTile" nome="{{ c.nome }}" contagem="{{ c.n }}" foto="{{ c.foto }}" href="{{ c.href }}" hint-size="100%,150px"></x-import></sc-for></x-import>
+    </div>
+  </section>
+
+  <section style="padding-bottom:var(--sec-y)">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.GuaranteeStrip" itens="{{ garantias }}" hint-size="100%,120px"></x-import>
+    </div>
+  </section>
+
+  <section class="erk-sec erk-sec--suave">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="Mais vendidas" apoio="As peças que mais saem da oficina" link="Ver o catálogo" link-href="#/catalogo" hint-size="100%,60px"></x-import>
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductGrid" hint-size="100%,420px"><sc-for list="{{ vendidas }}" as="p" hint-placeholder-count="4"><div class="erk-cardclick" onClick="{{ p.onAbrir }}" style="display:contents"><x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductCard" nome="{{ p.nome }}" categoria="{{ p.cat }}" spec="{{ p.spec }}" foto="{{ p.foto }}" valor="{{ p.valor }}" antigo="{{ p.antigo }}" parcela="{{ p.parcela }}" tags="{{ p.tags }}" desconto="{{ p.desconto }}" favorito="{{ p.fav }}" on-favorito="{{ p.onFav }}" href="{{ p.href }}" acao="Ver a peça" acao-href="{{ p.href }}" on-adicionar="{{ p.onAdd }}" hint-size="100%,420px"></x-import></div></sc-for></x-import>
+    </div>
+  </section>
+
+  <sc-if value="{{ mostrar3d }}" hint-placeholder-val="{{ true }}">
+  <section class="erk-sec">
+    <div class="erk-wrap">
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(20px,3.2vw,52px);align-items:center;background:var(--surface-card);border:1px solid var(--border-1);border-radius:22px;padding:clamp(20px,2.8vw,40px)">
+        <div style="flex:1 1 300px;min-width:0">
+          <span style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">Ver em 3D</span>
+          <h2 style="font-family:var(--font-display);font-weight:600;font-size:clamp(21px,2.5vw,32px);line-height:1.16;margin-top:12px">Gire a peça antes de comprar</h2>
+          <p style="color:var(--text-2);font-size:15px;margin-top:14px;max-width:52ch;text-wrap:pretty">Cada peça do catálogo tem o modelo 3D montado elo por elo, na medida real. Arraste para girar, use a rolagem para aproximar e veja a espessura de perto — do jeito que você veria no balcão.</p>
+          <ul style="display:grid;gap:11px;margin-top:20px">
+            <li style="display:flex;gap:11px;align-items:center;font-size:14px;color:var(--text-2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none"></span>Elo cubano, grumet, veneziana, cartier e baiana</li>
+            <li style="display:flex;gap:11px;align-items:center;font-size:14px;color:var(--text-2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none"></span>Espessura de 2,5 mm a 8 mm, na escala certa</li>
+            <li style="display:flex;gap:11px;align-items:center;font-size:14px;color:var(--text-2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none"></span>Polido, escovado ou oxidado</li>
+          </ul>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:26px">
+            <a class="erk-btn erk-btn--p" href="#/montar">Montar a minha peça</a>
+            <a class="erk-btn erk-btn--s" href="#/peca/p01">Ver a corrente cubana</a>
+          </div>
+        </div>
+        <div style="flex:1 1 320px;min-width:0">
+          <sc-if value="{{ inline3d }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;border-radius:16px;overflow:hidden;background:var(--gradiente-hero);border:1px solid var(--border-1);height:clamp(300px,38vw,420px)">
+              <canvas ref="{{ ref3dHome }}" style="width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab"></canvas>
+              <span style="position:absolute;left:14px;bottom:14px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);background:rgba(13,15,18,.72);padding:6px 12px;border-radius:980px;backdrop-filter:blur(8px)">Arraste para girar</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ botao3d }}" hint-placeholder-val="{{ false }}">
+            <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border-1);background:var(--surface-forte);aspect-ratio:4/3">
+              <div role="img" aria-label="Corrente cubana de prata 925" style="{{ estiloFoto3dHome }}"></div>
+              <button type="button" onClick="{{ abrir3dHome }}" style="{{ estiloPilula3d }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"></path></svg>Ver em 3D</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <section style="padding-bottom:var(--sec-y)">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.PromoPair" hint-size="100%,270px">
+        <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.PromoBanner" olho="Oficina própria" titulo="Sua prata volta a brilhar" texto="Polimento, solda de elo, troca de fecho e ajuste de aro — mesmo em peça que você não comprou aqui. Orçamento na hora." foto="{{ fotoOficinaPromo }}" acao="Falar com a oficina" acao-href="{{ wa }}" hint-size="100%,270px"></x-import>
+        <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.PromoBanner" olho="Sob encomenda" titulo="Do seu jeito" texto="Escolha o elo, a espessura e a gravação." foto="{{ fotoPresente }}" acao="Montar a minha peça" acao-href="#/montar" acento="{{ sim }}" hint-size="100%,270px"></x-import>
+      </x-import>
+    </div>
+  </section>
+
+  <section class="erk-sec erk-sec--suave">
+    <div class="erk-wrap">
+      <div class="erk-oficina">
+        <figure class="erk-oficina__fig"><img src="{{ fotoOficina }}" alt="A oficina fica aqui dentro" loading="lazy" /></figure>
+        <div>
+          <h2>A oficina fica aqui dentro</h2>
+          <p>Não mandamos sua peça para lugar nenhum. Polimento, solda e ajuste são feitos na bancada da loja, em Salto — muita coisa sai no mesmo dia.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12.3l2.4 2.4 4.6-4.9"></path></svg> Polimento que tira a camada oxidada sem desgastar o metal</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12.3l2.4 2.4 4.6-4.9"></path></svg> Solda de elo e troca de fecho com garantia</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12.3l2.4 2.4 4.6-4.9"></path></svg> Ajuste de aro de anel na sua frente</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12.3l2.4 2.4 4.6-4.9"></path></svg> Gravação de nome, inicial e data</li>
+          </ul>
+          <a class="erk-btn erk-btn--p" href="{{ wa }}">Falar com a oficina</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding:var(--sec-y) 0">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.CTABanner" titulo="Ficou com dúvida no tamanho?" texto="Manda uma mensagem que a gente te ajuda a escolher a medida certa, calcula o frete e confirma a disponibilidade na hora." acao="Chamar no WhatsApp" acao-href="{{ wa }}" hint-size="100%,180px"></x-import>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehCatalogo }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Catálogo" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap">
+    <sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ true }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="{{ tituloCatalogo }}" apoio="{{ apoioCatalogo }}" hint-size="100%,60px"></x-import>
+    </sc-if>
+    <div style="display:flex;gap:10px;flex-wrap:nowrap;align-items:center;margin-bottom:26px">
+      <div style="{{ estiloBotFiltro }}">
+        <button type="button" onClick="{{ abrirCat }}" style="{{ estiloPilula }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none"><path d="M4 6h16M7 12h10M10 18h4"></path></svg><span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ rotuloFiltro }}</span></button>
+        <sc-if value="{{ menuCat }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ fecharMenus }}" style="{{ estiloVeu }}"></div>
+          <div style="{{ estiloMenu }}">
+            <sc-if value="{{ estreito }}" hint-placeholder-val="{{ false }}">
+              <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);padding:10px 14px 12px">Filtrar por categoria</p>
+            </sc-if>
+            <sc-for list="{{ opsCat }}" as="o" hint-placeholder-count="0"><button type="button" onClick="{{ o.on }}" style="{{ o.estilo }}"><span>{{ o.nome }}</span><span style="color:var(--text-3);font-size:13px">{{ o.n }}</span></button></sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="{{ estiloBotFiltro }}">
+        <button type="button" onClick="{{ abrirOrd }}" style="{{ estiloPilula }}"><span style="flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ rotuloOrdem }}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none;transform:rotate(90deg)"><path d="M9 6l6 6-6 6"></path></svg></button>
+        <sc-if value="{{ menuOrd }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ fecharMenus }}" style="{{ estiloVeu }}"></div>
+          <div style="{{ estiloMenu }}">
+            <sc-if value="{{ estreito }}" hint-placeholder-val="{{ false }}">
+              <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);padding:10px 14px 12px">Ordenar por</p>
+            </sc-if>
+            <sc-for list="{{ opsOrdem }}" as="o" hint-placeholder-count="0"><button type="button" onClick="{{ o.on }}" style="{{ o.estilo }}"><span>{{ o.nome }}</span></button></sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <sc-if value="{{ temLista }}" hint-placeholder-val="{{ true }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductGrid" cols="{{ tres }}" hint-size="100%,420px"><sc-for list="{{ lista }}" as="p" hint-placeholder-count="6"><div class="erk-cardclick" onClick="{{ p.onAbrir }}" style="display:contents"><x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductCard" nome="{{ p.nome }}" categoria="{{ p.cat }}" spec="{{ p.spec }}" foto="{{ p.foto }}" valor="{{ p.valor }}" antigo="{{ p.antigo }}" parcela="{{ p.parcela }}" tags="{{ p.tags }}" desconto="{{ p.desconto }}" favorito="{{ p.fav }}" on-favorito="{{ p.onFav }}" href="{{ p.href }}" acao="Ver a peça" acao-href="{{ p.href }}" on-adicionar="{{ p.onAdd }}" hint-size="100%,420px"></x-import></div></sc-for></x-import>
+    </sc-if>
+    <sc-if value="{{ semLista }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.EmptyState" hint-size="100%,90px">Nada por aqui ainda. Toque em "Todas" para ver o catálogo inteiro.</x-import>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehPeca }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Peça" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap" style="padding-top:18px">
+    <p style="font-size:12.5px;color:var(--text-3);display:flex;gap:8px;align-items:center;flex-wrap:wrap"><a href="#/home">Início</a><span>·</span><a href="{{ pecaCatHref }}">{{ pecaCat }}</a><span>·</span><span style="color:var(--text-2)">{{ peca.nome }}</span></p>
+  </div>
+  <section class="erk-sec" style="padding-top:22px">
+    <div class="erk-wrap">
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(22px,3.2vw,52px);align-items:flex-start">
+        <div style="flex:1 1 430px;min-width:0">
+          <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border-1);background:var(--surface-forte);aspect-ratio:1/1">
+            <sc-if value="{{ vistaFoto }}" hint-placeholder-val="{{ false }}">
+              <div role="img" aria-label="{{ peca.nome }}" style="{{ estiloFotoPeca }}"></div>
+            </sc-if>
+            <sc-if value="{{ vista3d }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;background:var(--gradiente-hero)">
+                <canvas ref="{{ ref3dPeca }}" style="width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab"></canvas>
+                <span style="position:absolute;left:14px;bottom:14px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);background:rgba(13,15,18,.72);padding:6px 12px;border-radius:980px">Arraste para girar · rolagem aproxima</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ erro3d }}" hint-placeholder-val="{{ false }}">
+              <p style="position:absolute;inset:auto 14px 14px;font-size:13px;color:var(--text-2);background:rgba(13,15,18,.86);padding:10px 14px;border-radius:10px">O modelo 3D não carregou. Confira a conexão e recarregue a página.</p>
+            </sc-if>
+            <sc-if value="{{ vistaFoto }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute;right:12px;top:12px;font-size:11.5px;letter-spacing:.08em;color:var(--text-2);background:rgba(13,15,18,.72);padding:5px 11px;border-radius:980px">{{ contadorFoto }}</span>
+            </sc-if>
+            <sc-if value="{{ vistaFoto }}" hint-placeholder-val="{{ false }}">
+              <button type="button" aria-label="Foto anterior" onClick="{{ fotoAnterior }}" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:980px;background:rgba(13,15,18,.72);border:1px solid var(--border-2);color:var(--text-1);cursor:pointer;transition:background 180ms cubic-bezier(.28,0,.12,1),border-color 180ms cubic-bezier(.28,0,.12,1)" style-hover="background:rgba(13,15,18,.9);border-color:var(--text-1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:19px;height:19px"><path d="M15 5l-7 7 7 7"></path></svg>
+              </button>
+              <button type="button" aria-label="Próxima foto" onClick="{{ fotoProxima }}" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:980px;background:rgba(13,15,18,.72);border:1px solid var(--border-2);color:var(--text-1);cursor:pointer;transition:background 180ms cubic-bezier(.28,0,.12,1),border-color 180ms cubic-bezier(.28,0,.12,1)" style-hover="background:rgba(13,15,18,.9);border-color:var(--text-1)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:19px;height:19px"><path d="M9 5l7 7-7 7"></path></svg>
+              </button>
+            </sc-if>
+            <sc-if value="{{ botao3dPeca }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ abrir3dPeca }}" style="{{ estiloPilula3d }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"></path></svg>Ver em 3D</button>
+            </sc-if>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <sc-for list="{{ minis }}" as="m" hint-placeholder-count="0"><button type="button" onClick="{{ m.on }}" style="{{ m.estiloBotao }}"><span style="{{ m.estilo }}"></span></button></sc-for>
+          </div>
+        </div>
+
+        <div style="flex:1 1 430px;min-width:0">
+          <p style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">{{ pecaCat }}</p>
+          <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,40px);line-height:1.14;margin-top:8px">{{ peca.nome }}</h1>
+          <p style="font-size:14px;color:var(--text-2);margin-top:10px">{{ pecaSpec }}</p>
+          <div style="margin-top:20px">
+            <p class="erk-preco erk-preco--g"><b>{{ peca.valor }}</b><s>{{ peca.antigo }}</s></p>
+            <p class="erk-parc">{{ peca.parcela }}</p>
+          </div>
+          <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-top:26px">{{ rotuloMedida }}</p>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:10px">
+            <sc-for list="{{ chipsMedida }}" as="o" hint-placeholder-count="4"><button type="button" class="{{ o.cls }}" onClick="{{ o.on }}" style="white-space:nowrap">{{ o.nome }}</button></sc-for>
+          </div>
+          <div style="display:grid;gap:10px;margin-top:26px">
+            <sc-if value="{{ mostrarNav }}" hint-placeholder-val="{{ true }}">
+              <button type="button" class="erk-btn erk-btn--p erk-btn--full" onClick="{{ addPeca }}">Adicionar à sacola</button>
+            </sc-if>
+            <a class="erk-btn erk-btn--s erk-btn--full" href="{{ wa }}">Tirar dúvida no WhatsApp</a>
+            <button type="button" onClick="{{ favPeca }}" style="{{ estiloFav }}"><svg viewBox="0 0 24 24" fill="{{ preenchimentoFav }}" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="{{ estiloCoracao }}"><path d="M12 20.5S3.5 15 3.5 9.2A4.7 4.7 0 0 1 12 6.6a4.7 4.7 0 0 1 8.5 2.6C20.5 15 12 20.5 12 20.5Z"></path></svg>{{ textoFav }}</button>
+          </div>
+          <ul style="display:grid;gap:12px;margin-top:26px;border-top:1px solid var(--border-1);padding-top:22px">
+            <li style="display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none;margin-top:2px"><circle cx="6" cy="17" r="3"></circle><circle cx="18" cy="17" r="3"></circle><path d="M9 17h6l-2-8h3M6 9h4"></path></svg>Motoboy no mesmo dia em Salto, Itu, Indaiatuba e Cabreúva</li>
+            <li style="display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none;margin-top:2px"><path d="M12 3l7 3v5.5c0 4.3-2.9 7.6-7 8.5-4.1-.9-7-4.2-7-8.5V6z"></path><path d="M9 12l2 2 4-4"></path></svg>Garantia vitalícia contra defeito de fabricação</li>
+            <li style="display:flex;gap:11px;align-items:flex-start;font-size:14px;color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;flex:none;margin-top:2px"><path d="M14 4l6 6-3 3-6-6z"></path><path d="M11 7L4 14l3 3 7-7"></path></svg>Ajuste de medida e gravação feitos na loja</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="erk-sec erk-sec--suave">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="A peça" apoio="Ficha técnica e cuidado" hint-size="100%,60px"></x-import>
+      <dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:0 clamp(20px,3.4vw,52px);margin:0">
+        <sc-for list="{{ ficha }}" as="f" hint-placeholder-count="0">
+          <div style="display:grid;gap:7px;padding:18px 0;border-top:1px solid var(--border-1)">
+            <dt style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">{{ f.k }}</dt>
+            <dd style="font-size:15px;margin:0">{{ f.v }}</dd>
+          </div>
+        </sc-for>
+      </dl>
+      <p style="color:var(--text-2);font-size:15px;margin-top:clamp(22px,2.6vw,32px);max-width:70ch;text-wrap:pretty">Prata escurece com o tempo — é reação natural do metal, não defeito. Guarde seca, longe de perfume e cloro. Quando perder o brilho, traga na loja: o polimento é rápido e a gente devolve a peça como saiu da bancada.</p>
+      <div style="margin-top:clamp(24px,3vw,40px)">
+        <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.GuaranteeStrip" itens="{{ garantias }}" hint-size="100%,120px"></x-import>
+      </div>
+    </div>
+  </section>
+
+  <section class="erk-sec">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="Quem viu, viu também" link="Ver o catálogo" link-href="#/catalogo" hint-size="100%,60px"></x-import>
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductGrid" hint-size="100%,420px"><sc-for list="{{ relacionados }}" as="p" hint-placeholder-count="4"><div class="erk-cardclick" onClick="{{ p.onAbrir }}" style="display:contents"><x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.ProductCard" nome="{{ p.nome }}" categoria="{{ p.cat }}" spec="{{ p.spec }}" foto="{{ p.foto }}" valor="{{ p.valor }}" antigo="{{ p.antigo }}" parcela="{{ p.parcela }}" tags="{{ p.tags }}" desconto="{{ p.desconto }}" favorito="{{ p.fav }}" on-favorito="{{ p.onFav }}" href="{{ p.href }}" acao="Ver a peça" acao-href="{{ p.href }}" on-adicionar="{{ p.onAdd }}" hint-size="100%,420px"></x-import></div></sc-for></x-import>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehMontar }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Montar a sua peça" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <section class="erk-sec">
+    <div class="erk-wrap">
+      <div style="max-width:60ch">
+        <span class="erk-selo">Sob encomenda</span>
+        <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(30px,4.3vw,53px);line-height:1.08;margin-top:16px">Monte a sua peça</h1>
+        <p style="color:var(--text-2);font-size:16px;margin-top:14px;text-wrap:pretty">Uma escolha por etapa. O modelo 3D acompanha cada mudança e o preço sai do peso da prata — do mesmo jeito que a gente calcula na bancada. Pode voltar e trocar quando quiser.</p>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(22px,3vw,44px);align-items:flex-start;margin-top:clamp(28px,3.4vw,44px)">
+        <div style="{{ estiloVisor }}">
+          <sc-if value="{{ inline3d }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border-1);background:var(--gradiente-hero);height:clamp(320px,46vh,520px)">
+              <canvas ref="{{ ref3dMontar }}" style="width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab"></canvas>
+              <span style="position:absolute;left:14px;bottom:14px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);background:rgba(13,15,18,.72);padding:6px 12px;border-radius:980px">{{ resumoPeca }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ botao3d }}" hint-placeholder-val="{{ false }}">
+            <div style="position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border-1);background:var(--surface-forte);aspect-ratio:4/3">
+              <div role="img" aria-label="{{ resumoPeca }}" style="{{ estiloFotoMontar }}"></div>
+              <span style="position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);font-size:11.5px;color:var(--text-1);background:rgba(13,15,18,.78);padding:7px 12px;border-radius:980px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ resumoPeca }}</span>
+              <button type="button" onClick="{{ abrir3dMontar }}" style="{{ estiloPilula3d }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:none"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"></path></svg>Ver em 3D</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ erro3d }}" hint-placeholder-val="{{ false }}">
+            <p style="font-size:13px;color:var(--text-2);margin-top:10px">O modelo 3D não carregou. Você pode montar a peça normalmente e a gente confirma tudo no WhatsApp.</p>
+          </sc-if>
+        </div>
+
+        <div style="flex:1 1 380px;min-width:0;display:grid;gap:22px">
+          <div style="display:grid;gap:10px">
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{ passos }}" as="p" hint-placeholder-count="0">
+                <button type="button" onClick="{{ p.on }}" aria-label="{{ p.nome }}" style="{{ p.estilo }}"></button>
+              </sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:14px;align-items:baseline">
+              <span style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">{{ passoNome }}</span>
+              <sc-if value="{{ temVoltarPasso }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ passoAnterior }}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M15 5l-7 7 7 7"></path></svg>Voltar</button>
+              </sc-if>
+            </div>
+          </div>
+
+          <div>
+            <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">Etapa {{ passoNum }} de {{ passoTotal }}</p>
+            <h2 style="font-family:var(--font-display);font-weight:600;font-size:clamp(21px,2.5vw,30px);line-height:1.16;margin-top:9px">{{ passoTitulo }}</h2>
+            <p style="font-size:14.5px;color:var(--text-2);margin-top:10px;max-width:46ch;text-wrap:pretty">{{ passoApoio }}</p>
+          </div>
+
+          <sc-if value="{{ passoOpcoes }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;gap:9px">
+              <sc-for list="{{ opcoesPasso }}" as="o" hint-placeholder-count="4">
+                <button type="button" onClick="{{ o.on }}" style="{{ o.estilo }}">
+                  <span style="display:grid;gap:3px;text-align:left;min-width:0">
+                    <b style="font-size:15px;font-weight:600">{{ o.nome }}</b>
+                    <em style="font-style:normal;font-size:12.5px;color:var(--text-2)">{{ o.detalhe }}</em>
+                  </span>
+                  <span style="{{ o.marca }}"></span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ passoGravacao }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <input value="{{ grav }}" onChange="{{ setGrav }}" maxlength="14" placeholder="Nome, inicial ou data" style="width:100%;height:50px;border-radius:980px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 20px;font-size:16px;outline:none;color:var(--text-1)" />
+              <p style="font-size:13.5px;color:var(--text-3);margin-top:11px;text-wrap:pretty">{{ notaGravacao }}</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ passoResumo }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:clamp(18px,2.2vw,26px)">
+              <dl style="display:grid;gap:0;margin:0">
+                <sc-for list="{{ fichaMontagem }}" as="f" hint-placeholder-count="0">
+                  <div style="display:flex;justify-content:space-between;gap:18px;padding:11px 0;border-bottom:1px solid var(--border-1)">
+                    <dt style="font-size:13px;color:var(--text-3)">{{ f.k }}</dt>
+                    <dd style="font-size:14px;margin:0;text-align:right">{{ f.v }}</dd>
+                  </div>
+                </sc-for>
+              </dl>
+              <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-top:18px">
+                <span style="font-size:13.5px;color:var(--text-2)">Total</span>
+                <div style="text-align:right"><p class="erk-preco erk-preco--g"><b>{{ precoMontagem }}</b></p><p class="erk-parc">{{ parcelaMontagem }}</p></div>
+              </div>
+              <p style="font-size:13.5px;color:var(--text-3);margin-top:16px;text-wrap:pretty">Pronto em 5 dias úteis na bancada. A medida é conferida com você no WhatsApp antes de a peça entrar na produção.</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ rodapeDesktop }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:12px;align-items:center;border-top:1px solid var(--border-1);padding-top:20px">
+              <button type="button" class="erk-btn erk-btn--p" onClick="{{ acaoPasso }}" style="flex:1 1 auto;justify-content:center;gap:10px">{{ rotuloAcaoPasso }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"></path></svg></button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="erk-sec erk-sec--suave">
+    <div class="erk-wrap">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SectionHeader" titulo="Como a peça é feita" apoio="Três etapas, todas em Salto" hint-size="100%,60px"></x-import>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--gap-grade)">
+        <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:clamp(20px,2.4vw,30px)">
+          <p style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text-3)">01</p>
+          <h3 style="font-family:var(--font-display);font-weight:600;font-size:19px;margin-top:12px">Você monta</h3>
+          <p style="font-size:14px;color:var(--text-2);margin-top:8px">Elo, espessura, medida, acabamento e gravação. O 3D mostra a peça na escala real.</p>
+        </div>
+        <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:clamp(20px,2.4vw,30px)">
+          <p style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text-3)">02</p>
+          <h3 style="font-family:var(--font-display);font-weight:600;font-size:19px;margin-top:12px">A gente confirma</h3>
+          <p style="font-size:14px;color:var(--text-2);margin-top:8px">Uma mensagem para fechar a medida e o peso. Nada vai para a bancada sem o seu ok.</p>
+        </div>
+        <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:clamp(20px,2.4vw,30px)">
+          <p style="font-family:var(--font-display);font-size:26px;font-weight:700;color:var(--text-3)">03</p>
+          <h3 style="font-family:var(--font-display);font-weight:600;font-size:19px;margin-top:12px">Sai da bancada</h3>
+          <p style="font-size:14px;color:var(--text-2);margin-top:8px">Punção gravado, polimento final e embalagem própria. Motoboy na região ou envio para todo o Brasil.</p>
+        </div>
+      </div>
+      <div style="margin-top:clamp(24px,3vw,40px)">
+        <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.GuaranteeStrip" itens="{{ garantias }}" hint-size="100%,120px"></x-import>
+      </div>
+    </div>
+  </section>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehSacola }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Sacola" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap">
+    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px;color:var(--text-3);margin-bottom:14px">
+      <b style="color:var(--text-1);font-weight:600">1. Sacola</b><span>›</span><span>2. Dados</span><span>›</span><span>3. Confirmação</span>
+    </div>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,40px);line-height:1.12">Sua sacola</h1>
+    <sc-if value="{{ temSacola }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:clamp(20px,3vw,40px);align-items:flex-start;margin-top:26px">
+      <div style="flex:999 1 min(100%,440px);min-width:0;display:grid;gap:10px">
+        <sc-for list="{{ itens }}" as="i" hint-placeholder-count="0">
+          <div style="display:grid;grid-template-columns:62px minmax(0,1fr);gap:14px;align-items:center;padding:10px;border:1px solid var(--border-1);border-radius:14px;background:var(--surface-card)">
+            <span role="img" aria-label="{{ i.nome }}" style="{{ i.estiloFoto }}"></span>
+            <span style="min-width:0;display:grid;gap:3px">
+              <b style="font-size:14.5px;font-weight:600">{{ i.nome }}</b>
+              <span style="font-size:12.5px;color:var(--text-2)">{{ i.spec }}</span>
+            </span>
+            <span style="{{ i.estiloControles }}">
+              <span style="display:inline-flex;align-items:center;gap:2px;border:1px solid var(--border-2);border-radius:980px;padding:2px">
+                <button type="button" onClick="{{ i.menos }}" aria-label="Menos" style="width:40px;height:40px;display:grid;place-items:center;color:var(--text-2);font-size:17px">–</button>
+                <b style="min-width:24px;text-align:center;font-size:14.5px">{{ i.q }}</b>
+                <button type="button" onClick="{{ i.mais }}" aria-label="Mais" style="width:40px;height:40px;display:grid;place-items:center;color:var(--text-2);font-size:17px">+</button>
+              </span>
+              <b style="font-size:15.5px;white-space:nowrap;margin-left:auto">{{ i.total }}</b>
+              <button type="button" onClick="{{ i.remover }}" aria-label="Remover" style="width:40px;height:40px;display:grid;place-items:center;color:var(--text-3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12"></path></svg></button>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+      <aside style="{{ estiloAside }}">
+        <h4 style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">Resumo</h4>
+        <dl style="margin:18px 0 0;display:grid;gap:11px">
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14px"><dt style="color:var(--text-2)">Peças ({{ nSacola }})</dt><dd style="margin:0">{{ subtotal }}</dd></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14px"><dt style="color:var(--text-2)">Desconto aplicado</dt><dd style="margin:0;color:var(--ok)">{{ economia }}</dd></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14px"><dt style="color:var(--text-2)">Frete</dt><dd style="margin:0">a calcular</dd></div>
+        </dl>
+        <div style="{{ estiloTotal }}">
+          <span style="font-size:13.5px;color:var(--text-2)">Total</span>
+          <div style="{{ estiloTotalVal }}"><p class="erk-preco erk-preco--g"><b>{{ subtotal }}</b></p><p class="erk-parc">{{ parcelaTotal }}</p></div>
+        </div>
+        <a class="erk-btn erk-btn--p erk-btn--full" href="#/checkout" style="margin-top:20px">Fechar o pedido</a>
+        <a class="erk-btn erk-btn--s erk-btn--full" href="#/catalogo" style="margin-top:10px">Continuar comprando</a>
+      </aside>
+    </div>
+    </sc-if>
+    <sc-if value="{{ vaziaSacola }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.EmptyState" hint-size="100%,90px">Sua sacola está vazia. Escolha uma peça no catálogo para começar.</x-import>
+      <div style="display:flex;justify-content:center"><a class="erk-btn erk-btn--p" href="#/catalogo">Ver o catálogo</a></div>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehCheckout }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Checkout" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap">
+    <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12px;color:var(--text-3);margin-bottom:14px">
+      <a href="#/sacola" style="color:var(--text-3);text-decoration:underline">1. Sacola</a><span>›</span><b style="color:var(--text-1);font-weight:600">2. Dados</b><span>›</span><span>3. Confirmação</span>
+    </div>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,40px);line-height:1.12">Fechar o pedido</h1>
+    <div style="display:flex;flex-wrap:wrap;gap:clamp(20px,3vw,40px);align-items:flex-start;margin-top:26px">
+      <div style="flex:999 1 min(100%,440px);min-width:0;display:grid;gap:clamp(24px,3vw,36px)">
+        <div>
+          <h2 style="font-family:var(--font-display);font-weight:600;font-size:21px">Seus dados</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin-top:16px">
+            <label style="display:grid;gap:7px;grid-column:1/-1"><span style="font-size:12.5px;color:var(--text-3)">Nome completo</span><input placeholder="Como está no documento" style="height:46px;border-radius:10px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 14px;font-size:16px;outline:none;color:var(--text-1)" /></label>
+            <label style="display:grid;gap:7px"><span style="font-size:12.5px;color:var(--text-3)">WhatsApp</span><input placeholder="(11) 9 9999-9999" style="height:46px;border-radius:10px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 14px;font-size:16px;outline:none;color:var(--text-1)" /></label>
+            <label style="display:grid;gap:7px"><span style="font-size:12.5px;color:var(--text-3)">CPF</span><input placeholder="000.000.000-00" style="height:46px;border-radius:10px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 14px;font-size:16px;outline:none;color:var(--text-1)" /></label>
+            <label style="display:grid;gap:7px"><span style="font-size:12.5px;color:var(--text-3)">CEP</span><input placeholder="13320-000" style="height:46px;border-radius:10px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 14px;font-size:16px;outline:none;color:var(--text-1)" /></label>
+            <label style="display:grid;gap:7px"><span style="font-size:12.5px;color:var(--text-3)">Número</span><input placeholder="000" style="height:46px;border-radius:10px;background:var(--surface-suave);border:1px solid var(--border-1);padding:0 14px;font-size:16px;outline:none;color:var(--text-1)" /></label>
+          </div>
+        </div>
+        <div>
+          <h2 style="font-family:var(--font-display);font-weight:600;font-size:21px">Entrega</h2>
+          <div style="display:grid;gap:10px;margin-top:16px">
+            <sc-for list="{{ opEntrega }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.on }}" style="{{ o.estilo }}">
+                <span style="display:grid;gap:4px;text-align:left"><b style="font-size:14.5px">{{ o.nome }}</b><em style="font-style:normal;font-size:13.5px;color:var(--text-2)">{{ o.detalhe }}</em></span>
+                <span style="{{ o.marca }}"></span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div>
+          <h2 style="font-family:var(--font-display);font-weight:600;font-size:21px">Pagamento</h2>
+          <div style="display:grid;gap:10px;margin-top:16px">
+            <sc-for list="{{ opPagamento }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.on }}" style="{{ o.estilo }}">
+                <span style="display:grid;gap:4px;text-align:left"><b style="font-size:14.5px">{{ o.nome }}</b><em style="font-style:normal;font-size:13.5px;color:var(--text-2)">{{ o.detalhe }}</em></span>
+                <span style="{{ o.marca }}"></span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <aside style="{{ estiloAside }}">
+        <h4 style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)">Seu pedido</h4>
+        <div style="display:grid;gap:10px;margin-top:16px">
+          <sc-for list="{{ itens }}" as="i" hint-placeholder-count="0">
+            <div class="erk-linha"><img src="{{ i.foto }}" alt="" loading="lazy" /><span><b>{{ i.nome }}</b><span>{{ i.linha }}</span></span><i>{{ i.total }}</i></div>
+          </sc-for>
+        </div>
+        <dl style="margin:18px 0 0;display:grid;gap:11px">
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14px"><dt style="color:var(--text-2)">Peças</dt><dd style="margin:0">{{ subtotal }}</dd></div>
+          <div style="display:flex;justify-content:space-between;gap:14px;font-size:14px"><dt style="color:var(--text-2)">Frete</dt><dd style="margin:0">{{ freteFmt }}</dd></div>
+        </dl>
+        <div style="{{ estiloTotal }}">
+          <span style="font-size:13.5px;color:var(--text-2)">Total</span>
+          <div style="{{ estiloTotalVal }}"><p class="erk-preco erk-preco--g"><b>{{ totalFmt }}</b></p><p class="erk-parc">{{ parcelaFinal }}</p></div>
+        </div>
+        <button type="button" class="erk-btn erk-btn--a erk-btn--full" onClick="{{ confirmar }}" style="margin-top:20px">Confirmar pedido</button>
+        <p style="font-size:13.5px;color:var(--text-3);margin-top:14px">Garantia vitalícia e troca em 7 dias. Dúvida? <a href="{{ wa }}" style="color:var(--text-2);text-decoration:underline">fale com a loja</a>.</p>
+      </aside>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehPronto }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Pedido confirmado" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap" style="max-width:620px;text-align:center;padding-top:20px;padding-bottom:40px">
+    <span style="display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--surface-forte);border:1px solid var(--border-2);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 12.3l2.4 2.4 4.6-4.9"></path></svg></span>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,40px);line-height:1.12;margin-top:20px">Pedido confirmado</h1>
+    <p style="color:var(--text-2);margin-top:12px;text-wrap:pretty">Mandamos o resumo no seu WhatsApp. A peça sai da oficina embalada, com o cartão da loja — e a gente avisa quando o motoboy pegar a encomenda.</p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap">
+      <a class="erk-btn erk-btn--p" href="#/home">Voltar para a loja</a>
+      <a class="erk-btn erk-btn--s" href="{{ wa }}">Acompanhar no WhatsApp</a>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehBusca }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Busca" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap">
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.12">Buscar peça</h1>
+    <div style="margin-top:20px;max-width:640px">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.SearchBar" valor="{{ q }}" on-change="{{ setQ }}" hint-size="100%,46px"></x-import>
+    </div>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:16px">
+      <sc-for list="{{ sugestoes }}" as="o" hint-placeholder-count="5"><button type="button" class="{{ o.cls }}" onClick="{{ o.on }}" style="white-space:nowrap">{{ o.nome }}</button></sc-for>
+    </div>
+    <div style="margin-top:26px;display:grid;gap:10px;max-width:720px">
+      <sc-for list="{{ achados }}" as="p" hint-placeholder-count="0">
+        <a class="erk-linha" href="{{ p.href }}"><img src="{{ p.foto }}" alt="" loading="lazy" /><span><b>{{ p.nome }}</b><span>{{ p.spec }}</span></span><i>{{ p.valor }}</i></a>
+      </sc-for>
+    </div>
+    <sc-if value="{{ semAchados }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.EmptyState" hint-size="100%,90px">{{ textoSemAchados }}</x-import>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehConta }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Conta" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap" style="max-width:720px">
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.12">Sua conta</h1>
+
+    <sc-if value="{{ contaDeslogada }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:22px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:16px;padding:clamp(20px,3vw,28px)">
+        <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin:0">ACESSO</p>
+        <h2 style="font-family:var(--font-display);font-weight:600;font-size:clamp(19px,2.2vw,25px);line-height:1.2;margin:9px 0 8px">Entre para acompanhar seus pedidos</h2>
+        <p style="font-size:14px;line-height:1.6;color:var(--text-2);margin:0;text-wrap:pretty">Com a conta você vê onde está a sua peça, guarda medida e endereço, e acompanha o que está na bancada.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
+          <button type="button" class="erk-btn erk-btn--p" onClick="{{ entrarConta }}">Entrar</button>
+          <button type="button" class="erk-btn erk-btn--s" onClick="{{ entrarConta }}">Criar conta</button>
+        </div>
+        <a href="{{ wa }}" style="display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-size:13.5px;color:var(--text-3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M20 12a8 8 0 1 1-3.2-6.4"></path><path d="M4.5 19.5l1.2-3.4"></path></svg>Prefere sem conta? Chame a oficina no WhatsApp</a>
+      </div>
+
+      <div style="margin-top:16px;display:grid;gap:10px">
+        <sc-for list="{{ vantagensConta }}" as="v" hint-placeholder-count="3">
+          <div style="display:flex;align-items:flex-start;gap:13px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:15px 17px">
+            <span style="flex:none;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--surface-forte);border:1px solid var(--border-1);color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="{{ v.d }}"></path></svg></span>
+            <span style="min-width:0;display:grid;gap:3px">
+              <b style="font-size:14.5px;font-weight:600">{{ v.titulo }}</b>
+              <em style="font-style:normal;font-size:13px;color:var(--text-3);line-height:1.5">{{ v.texto }}</em>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ contaLogada }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:22px;display:flex;align-items:center;gap:14px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:16px;padding:18px">
+        <span style="flex:none;width:52px;height:52px;display:grid;place-items:center;border-radius:980px;background:var(--surface-forte);border:1px solid var(--border-2);font-family:var(--font-display);font-weight:700;font-size:17px">AR</span>
+        <span style="flex:1;min-width:0;display:grid;gap:3px">
+          <b style="font-size:16px;font-weight:600">Ana Ribeiro</b>
+          <em style="font-style:normal;font-size:13px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ana.ribeiro@email.com · (11) 91112-4875</em>
+        </span>
+      </div>
+
+      <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin:26px 0 12px">CONFIGURAÇÕES</p>
+      <div style="display:grid;gap:10px">
+        <a href="#/pedidos" style="display:flex;align-items:center;gap:14px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:16px 17px">
+          <span style="flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--surface-forte);border:1px solid var(--border-1);color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M6 8h12l-1 12H7z"></path><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"></path></svg></span>
+          <span style="flex:1;min-width:0;display:grid;gap:3px">
+            <b style="font-size:14.5px;font-weight:600;white-space:nowrap">Meus pedidos</b>
+            <em style="font-style:normal;font-size:13px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Entregues e em preparo</em>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:17px;height:17px;color:var(--text-3)"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+        <a href="#/dados" style="display:flex;align-items:center;gap:14px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:16px 17px">
+          <span style="flex:none;width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:var(--surface-forte);border:1px solid var(--border-1);color:var(--text-2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5.5 20c.6-3.4 3.3-5.2 6.5-5.2s5.9 1.8 6.5 5.2"></path></svg></span>
+          <span style="flex:1;min-width:0;display:grid;gap:3px">
+            <b style="font-size:14.5px;font-weight:600">Dados da conta</b>
+            <em style="font-style:normal;font-size:13px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Endereço, telefone e medidas</em>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;width:17px;height:17px;color:var(--text-3)"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+      </div>
+
+      <div style="margin-top:16px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:16px;padding:6px 16px">
+        <a href="#/favoritos" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px;border-bottom:1px solid var(--border-1)">Favoritos<em style="font-style:normal;margin-left:auto;font-size:12.5px;color:var(--text-3)">{{ nFavoritos }}</em></a>
+        <a href="#/sacola" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px;border-bottom:1px solid var(--border-1)">Sacola<em style="font-style:normal;margin-left:auto;font-size:12.5px;color:var(--text-3)">{{ nSacola }}</em></a>
+        <a href="{{ wa }}" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px">Falar com a oficina</a>
+      </div>
+
+      <button type="button" onClick="{{ sairConta }}" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:16px;min-height:52px;border-radius:14px;background:transparent;border:1px solid var(--acao-acento-bg);color:var(--acento);font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:var(--acao-acento-bg);color:#fff;border-color:var(--acao-acento-bg)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px"><path d="M14 5H6v14h8"></path><path d="M13 12h7M17 9l3 3-3 3"></path></svg>Sair da conta
+      </button>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehPedidos }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Pedidos" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap" style="max-width:720px">
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.12">Meus pedidos</h1>
+    <div style="display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-top:18px;padding-bottom:2px;scrollbar-width:none">
+      <sc-for list="{{ abasPedidos }}" as="a" hint-placeholder-count="3"><button type="button" class="{{ a.cls }}" onClick="{{ a.on }}" style="white-space:nowrap">{{ a.nome }}</button></sc-for>
+    </div>
+    <div style="margin-top:20px;display:grid;gap:10px">
+      <sc-for list="{{ pedidosVistos }}" as="o" hint-placeholder-count="3">
+        <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:16px 17px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="flex:1;min-width:0;display:grid;gap:3px">
+              <b style="font-size:14.5px;font-weight:600">{{ o.n }}</b>
+              <em style="font-style:normal;font-size:13px;color:var(--text-3)">{{ o.data }}</em>
+            </span>
+            <span style="{{ o.estiloSelo }}">{{ o.estado }}</span>
+          </div>
+          <p style="font-size:13.5px;color:var(--text-2);line-height:1.55;margin:11px 0 0">{{ o.itens }}</p>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-1)">
+            <b style="flex:1;font-size:15.5px;font-weight:700;letter-spacing:-.01em">{{ o.valor }}</b>
+            <em style="font-style:normal;font-size:12.5px;color:var(--text-3)">{{ o.entrega }}</em>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ semPedidos }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.EmptyState" hint-size="100%,90px">Nenhum pedido nesse estado por enquanto.</x-import>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehDados }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Dados da conta" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap" style="max-width:720px">
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.12">Dados da conta</h1>
+    <p style="font-size:14px;line-height:1.6;color:var(--text-2);margin:12px 0 0;text-wrap:pretty">Guardados para a próxima compra sair em dois toques. Alguma coisa mudou? Toque em editar.</p>
+    <sc-for list="{{ blocosDados }}" as="g" hint-placeholder-count="3">
+      <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin:26px 0 12px">{{ g.titulo }}</p>
+      <div style="background:var(--surface-card);border:1px solid var(--border-1);border-radius:16px;padding:4px 17px">
+        <sc-for list="{{ g.linhas }}" as="l" hint-placeholder-count="3">
+          <div style="{{ l.estilo }}">
+            <em style="flex:none;font-style:normal;font-size:12.5px;color:var(--text-3);min-width:104px">{{ l.rotulo }}</em>
+            <b style="flex:1;min-width:0;font-size:14.5px;font-weight:500;text-wrap:pretty">{{ l.valor }}</b>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px">
+      <button type="button" class="erk-btn erk-btn--p">Editar dados</button>
+      <a href="{{ wa }}" class="erk-btn erk-btn--s">Falar com a oficina</a>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ ehFavoritos }}" hint-placeholder-val="{{ false }}">
+<main class="erk-sec" data-screen-label="Favoritos" style="animation:erkEntra .22s cubic-bezier(.28,0,.12,1)">
+  <div class="erk-wrap">
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.12">Favoritos</h1>
+    <div style="margin-top:24px;display:grid;gap:10px;max-width:720px">
+      <sc-for list="{{ favs }}" as="p" hint-placeholder-count="0">
+        <a class="erk-linha" href="{{ p.href }}"><img src="{{ p.foto }}" alt="" loading="lazy" /><span><b>{{ p.nome }}</b><span>{{ p.spec }}</span></span><i>{{ p.valor }}</i></a>
+      </sc-for>
+    </div>
+    <sc-if value="{{ semFavs }}" hint-placeholder-val="{{ true }}">
+      <x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.EmptyState" hint-size="100%,90px">Toque no coração de uma peça para guardar aqui.</x-import>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ barraAcao }}" hint-placeholder-val="{{ false }}">
+<div style="height:78px"></div>
+<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface-card);border-top:1px solid var(--border-2);box-shadow:0 -14px 40px rgba(0,0,0,.45)">
+  <div style="max-width:var(--max);margin-inline:auto;padding:10px var(--pad) calc(10px + var(--safe));display:flex;align-items:center;gap:14px">
+    <span style="flex:1;min-width:0;display:grid;gap:2px">
+      <b style="font-size:17px;font-weight:700;white-space:nowrap">{{ barraValor }}</b>
+      <em style="font-style:normal;font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ barraSub }}</em>
+    </span>
+    <button type="button" class="erk-btn erk-btn--p" onClick="{{ barraOn }}" style="flex:none">{{ barraBotao }}</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetAberto }}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Peça em 3D" style="position:fixed;inset:0;z-index:120;background:var(--surface-pagina);display:flex;flex-direction:column">
+  <div style="flex:none;display:flex;align-items:center;gap:12px;padding:10px var(--pad);border-bottom:1px solid var(--border-1)">
+    <button type="button" onClick="{{ fecharSheet }}" aria-label="Fechar" style="flex:none;width:44px;height:44px;margin-left:-10px;display:grid;place-items:center;color:var(--text-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:21px;height:21px"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    <span style="flex:1;min-width:0;display:grid;gap:1px">
+      <b style="font-family:var(--font-display);font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sheetTitulo }}</b>
+      <em style="font-style:normal;font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sheetSub }}</em>
+    </span>
+  </div>
+  <div style="flex:1;min-height:0;position:relative;background:var(--gradiente-hero)">
+    <canvas ref="{{ ref3dSheet }}" style="width:100%;height:100%;display:block;touch-action:none;cursor:grab"></canvas>
+    <span style="position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:11.5px;color:var(--text-3)">Um dedo gira · dois dedos aproximam</span>
+    <sc-if value="{{ erro3d }}" hint-placeholder-val="{{ false }}">
+      <p style="position:absolute;inset:auto 16px 44px;text-align:center;font-size:13px;color:var(--text-2)">O modelo 3D não carregou. Confira a conexão e tente de novo.</p>
+    </sc-if>
+  </div>
+  <div style="flex:none;padding:12px var(--pad) calc(12px + var(--safe));border-top:1px solid var(--border-1);display:flex;align-items:center;gap:14px">
+    <span style="flex:1;min-width:0;display:grid;gap:2px">
+      <b style="font-size:17px;font-weight:700;white-space:nowrap">{{ sheetValor }}</b>
+      <em style="font-style:normal;font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sheetParcela }}</em>
+    </span>
+    <button type="button" class="erk-btn erk-btn--p" onClick="{{ sheetOn }}" style="flex:none">{{ sheetBotao }}</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ menuNav }}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-label="Menu" style="position:fixed;inset:0;z-index:130;background:var(--surface-pagina);overflow:auto;-webkit-overflow-scrolling:touch">
+  <div style="position:sticky;top:0;z-index:2;padding:10px var(--pad) 6px;background:var(--surface-pagina)">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:46px;padding:0 6px;border-radius:980px;background:var(--surface-forte);border:1px solid var(--border-1);color:var(--text-1)">
+      <span style="display:flex;align-items:center">
+        <button type="button" onClick="{{ fecharMenus }}" aria-label="Fechar o menu" style="width:34px;height:34px;margin-left:3px;display:grid;place-items:center;border:1px solid var(--acao-acento-bg);border-radius:9px;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="width:17px;height:17px"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+      </span>
+      <span style="display:grid;place-items:center;padding:0 6px;color:inherit"><b style="font-family:var(--font-display);font-weight:700;font-size:14.5px;letter-spacing:.2em;line-height:1;white-space:nowrap">ERK PRATAS</b></span>
+      <span style="display:flex;align-items:center;justify-content:flex-end">
+        <a href="#/busca" aria-label="Buscar" style="width:40px;height:40px;display:grid;place-items:center;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></a>
+        <a href="#/sacola" aria-label="Sacola" style="width:40px;height:40px;display:grid;place-items:center;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M6 8h12l-1 12H7z"></path><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"></path></svg></a>
+      </span>
+    </div>
+  </div>
+  <div style="padding:18px var(--pad) calc(28px + var(--safe))">
+    <nav style="display:grid;gap:10px">
+      <sc-for list="{{ linksMenu }}" as="l" hint-placeholder-count="0">
+        <a href="{{ l.href }}" style="position:relative;display:flex;align-items:flex-end;min-height:104px;border-radius:16px;overflow:hidden;background:var(--surface-card);border:1px solid var(--border-1)">
+          <span style="{{ l.estiloFoto }}"></span>
+          <span style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(13,15,18,.96) 0%,rgba(13,15,18,.82) 52%,rgba(13,15,18,.56) 100%)"></span>
+          <span style="position:relative;flex:1;min-width:0;display:grid;gap:5px;padding:16px 18px">
+            <b style="font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;line-height:1.2">{{ l.nome }}</b>
+            <em style="font-style:normal;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)">{{ l.apoio }}</em>
+          </span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:relative;width:17px;height:17px;flex:none;margin:0 18px 20px 0;color:var(--text-1)"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+      </sc-for>
+    </nav>
+    <p style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin:28px 0 12px">Categorias</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <sc-for list="{{ cats }}" as="c" hint-placeholder-count="0">
+        <a href="{{ c.href }}" style="display:flex;align-items:center;gap:11px;padding:9px 12px 9px 9px;border-radius:12px;background:var(--surface-card);border:1px solid var(--border-1)">
+          <span style="{{ c.estiloMini }}"></span>
+          <span style="min-width:0;display:grid;gap:2px">
+            <b style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.nome }}</b>
+            <em style="font-style:normal;font-size:11px;color:var(--text-3)">{{ c.n }}</em>
+          </span>
+        </a>
+      </sc-for>
+    </div>
+    <div style="margin-top:28px;background:var(--surface-card);border:1px solid var(--border-1);border-radius:16px;padding:6px 16px">
+      <a href="#/conta" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px;border-bottom:1px solid var(--border-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text-3)"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5.5 20c.6-3.4 3.3-5.2 6.5-5.2s5.9 1.8 6.5 5.2"></path></svg>Sua conta</a>
+      <a href="#/favoritos" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px;border-bottom:1px solid var(--border-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text-3)"><path d="M12 20.5S3.5 15 3.5 9.2A4.7 4.7 0 0 1 12 6.6a4.7 4.7 0 0 1 8.5 2.6C20.5 15 12 20.5 12 20.5Z"></path></svg>Favoritos</a>
+      <a href="#/sacola" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px;border-bottom:1px solid var(--border-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text-3)"><path d="M6 8h12l-1 12H7z"></path><path d="M9.5 8V6.5a2.5 2.5 0 0 1 5 0V8"></path></svg>Sacola<em style="font-style:normal;margin-left:auto;font-size:12.5px;color:var(--text-3)">{{ nSacola }}</em></a>
+      <a href="{{ wa }}" style="display:flex;align-items:center;gap:12px;min-height:52px;font-size:14.5px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--text-3)"><path d="M20 12a8 8 0 1 1-3.2-6.4"></path><path d="M4.5 19.5l1.2-3.4"></path></svg>Falar com a oficina</a>
+    </div>
+    <p style="font-size:11.5px;color:var(--text-3);margin-top:22px;text-wrap:pretty">Oficina própria em Salto, SP. Garantia vitalícia contra defeito de fabricação.</p>
+  </div>
+</div>
+</sc-if>
+
+<x-import component-from-global-scope="ERKPratasDesignSystem_e111e2.Footer" sobre="Joalheria de prata 925 legítima com oficina própria em Salto, São Paulo. Atendemos Itu, Indaiatuba, Cabreúva e Sorocaba, e enviamos para todo o Brasil." pagamentos="{{ pagamentos }}" colunas="{{ colunas }}" fim="{{ fim }}" hint-size="100%,300px"></x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;mostrar3d&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Loja&quot;},&quot;precoGrama&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:6.6,&quot;min&quot;:4,&quot;max&quot;:12,&quot;step&quot;:0.1,&quot;unit&quot;:&quot;R$/g&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Loja&quot;},&quot;telefone&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;5511911124875&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Loja&quot;}}">
+const FOTO = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
+
+const CATS = [
+  { id: 'correntes', nome: 'Correntes', icone: 'correntes', fid: 16109263 },
+  { id: 'pulseiras', nome: 'Pulseiras', icone: 'pulseiras', fid: 16304561 },
+  { id: 'aneis', nome: 'Anéis', icone: 'aneis', fid: 11351004 },
+  { id: 'pingentes', nome: 'Pingentes', icone: 'pingentes', fid: 16056798 },
+  { id: 'brincos', nome: 'Brincos', icone: 'brincos', fid: 15799258 },
+  { id: 'conjuntos', nome: 'Conjuntos', icone: 'conjuntos', fid: 7093184 },
+];
+
+const PRODS = [
+  { id: 'p01', n: 'Corrente cubana', c: 'correntes', s: 'Elo cubano · 60 cm', p: '231,00', a: '289,00', fid: 16124761, tags: ['Mais vendida'], d3: { tipo: 'corrente', elo: 'cubano', esp: 4, medida: 60 } },
+  { id: 'p02', n: 'Corrente grumet', c: 'correntes', s: 'Elo grumet · 60 cm', p: '199,00', a: '249,00', fid: 16109263, tags: [], d3: { tipo: 'corrente', elo: 'grumet', esp: 4, medida: 60 } },
+  { id: 'p03', n: 'Corrente veneziana', c: 'correntes', s: 'Malha veneziana · 45 cm', p: '143,00', a: '179,00', fid: 16109182, tags: [], d3: { tipo: 'corrente', elo: 'veneziana', esp: 2.5, medida: 45 } },
+  { id: 'p04', n: 'Corrente cartier', c: 'correntes', s: 'Elo alongado · 50 cm', p: '199,00', a: null, fid: 10973370, tags: ['Novo'], d3: { tipo: 'corrente', elo: 'cartier', esp: 4, medida: 50 } },
+  { id: 'p05', n: 'Corrente baiana', c: 'correntes', s: 'Elo com bola · 70 cm', p: '259,00', a: '319,00', fid: 34178925, tags: [], d3: { tipo: 'corrente', elo: 'baiana', esp: 5, medida: 70 } },
+  { id: 'p06', n: 'Pulseira cubana', c: 'pulseiras', s: 'Elo cubano · 21 cm', p: '151,00', a: '189,00', fid: 16304561, tags: ['Mais vendida'], d3: { tipo: 'pulseira', elo: 'cubano', esp: 4, medida: 21 } },
+  { id: 'p07', n: 'Pulseira veneziana', c: 'pulseiras', s: 'Malha veneziana · 18 cm', p: '129,00', a: null, fid: 13595530, tags: [], d3: { tipo: 'pulseira', elo: 'veneziana', esp: 2.5, medida: 18 } },
+  { id: 'p08', n: 'Bracelete liso', c: 'pulseiras', s: 'Aro liso · sem fecho', p: '175,00', a: '219,00', fid: 13595766, tags: [], d3: { tipo: 'bracelete', esp: 6 } },
+  { id: 'p09', n: 'Anel liso polido', c: 'aneis', s: 'Aro 4 mm · polido', p: '89,00', a: null, fid: 35409286, tags: [], d3: { tipo: 'anel', esp: 4, medida: 18 } },
+  { id: 'p10', n: 'Anel sinete', c: 'aneis', s: 'Com gravação', p: '149,00', a: null, fid: 6766024, tags: ['Sob encomenda'], d3: { tipo: 'anel', esp: 6, medida: 20, sinete: true, gravacao: 'ERK' } },
+  { id: 'p11', n: 'Pingente cruz', c: 'pingentes', s: 'Argola reforçada', p: '79,00', a: null, fid: 16056798, tags: [], d3: { tipo: 'pingente', pingente: 'cruz', esp: 4 } },
+  { id: 'p12', n: 'Placa personalizada', c: 'pingentes', s: 'Nome gravado', p: '129,00', a: null, fid: 147637, tags: ['Sob encomenda'], d3: { tipo: 'pingente', pingente: 'placa', esp: 4, gravacao: 'Ana' } },
+  { id: 'p13', n: 'Argola média', c: 'brincos', s: 'Par · 23 mm', p: '99,00', a: null, fid: 15799266, tags: [], d3: { tipo: 'brinco', brinco: 'argola', esp: 3 } },
+  { id: 'p14', n: 'Brinco ponto de luz', c: 'brincos', s: 'Par · com tarraxa', p: '69,00', a: '89,00', fid: 5370657, tags: ['Presente'], d3: { tipo: 'brinco', brinco: 'ponto', esp: 3 } },
+  { id: 'p15', n: 'Conjunto casal', c: 'conjuntos', s: 'Duas correntes cubanas', p: '343,00', a: '429,00', fid: 8345752, tags: ['Mais vendida'], d3: { tipo: 'corrente', elo: 'cubano', esp: 5, medida: 60 } },
+  { id: 'p16', n: 'Conjunto corrente e pulseira', c: 'conjuntos', s: 'Corrente 60 + pulseira 21', p: '279,00', a: '349,00', fid: 7093184, tags: [], d3: { tipo: 'corrente', elo: 'cubano', esp: 4, medida: 60 } },
+];
+
+const GARANTIAS = [
+  { icone: 'puncao', titulo: 'Prata 925 com punção', texto: 'Toda peça sai gravada. Nada de folheado.' },
+  { icone: 'garantia', titulo: 'Garantia vitalícia', texto: 'Defeito de fabricação a gente resolve, sem prazo.' },
+  { icone: 'entrega', titulo: 'Motoboy na região', texto: 'Salto, Itu, Indaiatuba e Cabreúva no mesmo dia.' },
+  { icone: 'oficina', titulo: 'Oficina própria', texto: 'Polimento, solda e ajuste feitos aqui dentro.' },
+];
+
+const num = (v) => parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
+const NB = '\u00A0';
+const fmt = (v) => 'R$' + NB + v.toFixed(2).replace('.', ',');
+const parcela = (v) => { const n = v >= 200 ? 6 : 3; return n + 'x de ' + fmt(v / n) + ' sem juros'; };
+const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+const NOME_ELO = { cubano: 'Cubano', grumet: 'Grumet', veneziana: 'Veneziana', cartier: 'Cartier', baiana: 'Baiana' };
+const NOME_TIPO = { corrente: 'Corrente', pulseira: 'Pulseira', anel: 'Anel', pingente: 'Pingente' };
+
+class Component extends DCLogic {
+  state = {
+    rota: 'home', param: '', filtro: 'todas', ordem: 'relevancia',
+    sacola: { p01: 1, p14: 1 }, favoritos: [], q: '',
+    vista: 'foto', foto: '', medida: '', entrega: 'motoboy', pagamento: 'pix',
+    b: { tipo: 'corrente', elo: 'cubano', esp: 4, medida: 60, acabamento: 'polido', pingente: '', gravacao: '' },
+    erro3d: false,
+    menu: '', sheet: '', etapa: 0, feitos: 0,
+    largo: typeof window !== 'undefined' && window.matchMedia('(min-width:900px)').matches,
+  };
+
+  viewers = {};
+  enviados = {};
+  specAtual = {};
+  refs3d = {
+    home: (el) => this.liga('home', el),
+    peca: (el) => this.liga('peca', el),
+    montar: (el) => this.liga('montar', el),
+    sheet: (el) => this.liga('sheet', el),
+  };
+
+  componentDidMount() {
+    this.onHash = () => this.lerHash();
+    window.addEventListener('hashchange', this.onHash);
+    this.mq = window.matchMedia('(min-width:900px)');
+    this.onMQ = () => this.setState({ largo: this.mq.matches });
+    this.mq.addEventListener('change', this.onMQ);
+    this.onMQ();
+    if (location.hash) this.lerHash();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('hashchange', this.onHash);
+    if (this.mq) this.mq.removeEventListener('change', this.onMQ);
+    document.body.style.overflow = '';
+    for (const k in this.viewers) { const v = this.viewers[k]; if (v && v.dispose) v.dispose(); }
+  }
+
+  componentDidUpdate() {
+    if (this._sheet !== this.state.sheet || this._menu !== this.state.menu) {
+      this._sheet = this.state.sheet;
+      this._menu = this.state.menu;
+      document.body.style.overflow = (this._sheet || this._menu === 'nav') ? 'hidden' : '';
+    }
+    for (const k in this.specAtual) {
+      const v = this.viewers[k], sp = this.specAtual[k];
+      if (v && v.setSpec && sp) {
+        const j = JSON.stringify(sp);
+        if (j !== this.enviados[k]) { v.setSpec(sp); this.enviados[k] = j; }
+      }
+    }
+  }
+
+  lerHash() {
+    const h = String(location.hash || '').replace(/^#\/?/, '');
+    const partes = h.split('/');
+    const r = partes[0] || 'home';
+    const st = { rota: r, param: partes[1] || '', vista: 'foto', foto: '', medida: '', menu: '', sheet: '', etapa: 0, feitos: 0 };
+    if (r === 'catalogo') st.filtro = partes[1] || 'todas';
+    this.setState(st);
+    window.scrollTo({ top: 0 });
+  }
+
+  liga(key, el) {
+    if (!el) {
+      const v = this.viewers[key];
+      if (v && v.dispose) v.dispose();
+      this.viewers[key] = 'morto';
+      delete this.enviados[key];
+      return;
+    }
+    if (this.viewers[key] && this.viewers[key] !== 'morto') return;
+    this.viewers[key] = 'carregando';
+    this.mod = this.mod || import('./erk-3d.js');
+    this.mod
+      .then((m) => m.createViewer(el, key === 'sheet' ? { orbitaVertical: true } : {}))
+      .then((v) => {
+        if (this.viewers[key] === 'morto') { v.dispose(); return; }
+        this.viewers[key] = v;
+        const sp = this.specAtual[key];
+        if (sp) { v.setSpec(sp); this.enviados[key] = JSON.stringify(sp); }
+      })
+      .catch((e) => { console.error('3D', e); this.viewers[key] = null; this.setState({ erro3d: true }); });
+  }
+
+  passoOpts(lista, atual, set, idx) {
+    return lista.map(([id, nome, detalhe]) => {
+      const on = String(id) === String(atual);
+      return {
+        id, nome, detalhe, on: () => set(id),
+        estilo: 'display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;padding:15px 18px;border-radius:14px;border:1px solid ' + (on ? 'var(--border-2)' : 'var(--border-1)') + ';background:' + (on ? 'var(--surface-forte)' : 'var(--surface-card)'),
+        marca: 'width:18px;height:18px;border-radius:50%;flex:none;border:1px solid ' + (on ? 'var(--text-1)' : 'var(--border-2)') + ';background:' + (on ? 'var(--text-1)' : 'transparent') + ';box-shadow:' + (on ? 'inset 0 0 0 3px var(--surface-forte)' : 'none'),
+      };
+    });
+  }
+
+  setB(k, v) { this.setState((s) => ({ b: { ...s.b, [k]: v } })); }
+  irPasso(n) { this.setState((s) => ({ etapa: Math.max(0, Math.min(n, s.feitos)) })); window.scrollTo({ top: 0 }); }
+  confirmar(i, aplicar) {
+    this.setState((s) => {
+      const st = aplicar(s) || {};
+      const base = ('feitos' in st) ? st.feitos : s.feitos;
+      return { ...st, etapa: i + 1, feitos: Math.max(base, i + 1) };
+    });
+    window.scrollTo({ top: 0 });
+  }
+  add(id, extra) {
+    this.setState((s) => ({ sacola: { ...s.sacola, [id]: (s.sacola[id] || 0) + 1 } }));
+    if (extra) this.montagens = { ...(this.montagens || {}), [id]: extra };
+    location.hash = '#/sacola';
+  }
+  qtd(id, n) {
+    this.setState((s) => { const c = { ...s.sacola }; if (n <= 0) delete c[id]; else c[id] = n; return { sacola: c }; });
+  }
+  fav(id) {
+    this.setState((s) => ({ favoritos: s.favoritos.includes(id) ? s.favoritos.filter((x) => x !== id) : [...s.favoritos, id] }));
+  }
+
+  chips(lista, atual, set) {
+    return lista.map((o) => {
+      const id = Array.isArray(o) ? o[0] : o;
+      const nome = Array.isArray(o) ? o[1] : String(o);
+      return { id: String(id), nome, cls: 'erk-chip' + (String(id) === String(atual) ? ' is-on' : ''), on: () => set(id) };
+    });
+  }
+
+  card(p) {
+    const s = this.state;
+    const pv = num(p.p);
+    return {
+      id: p.id, nome: p.n, cat: (CATS.find((c) => c.id === p.c) || {}).nome, spec: p.s,
+      foto: FOTO(p.fid, 600), valor: 'R$' + NB + p.p, antigo: p.a ? 'R$' + NB + p.a : undefined,
+      parcela: parcela(pv), tags: p.tags || [],
+      desconto: p.a ? '-' + Math.round((1 - pv / num(p.a)) * 100) + '%' : undefined,
+      fav: s.favoritos.includes(p.id), onFav: () => this.fav(p.id),
+      href: '#/peca/' + p.id,
+      onAbrir: (e) => {
+        if (e && e.target && e.target.closest && e.target.closest('a,button')) return;
+        location.hash = '#/peca/' + p.id;
+      },
+      onAdd: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.add(p.id); },
+    };
+  }
+
+  montagem() {
+    const b = this.state.b;
+    const g = Number(this.props.precoGrama ?? 6.6);
+    const esp = Number(b.esp);
+    let peso, base;
+    if (b.tipo === 'corrente' || b.tipo === 'pulseira') { peso = b.medida * esp * esp * 0.031; base = b.tipo === 'corrente' ? 38 : 62; }
+    else if (b.tipo === 'anel') { peso = 2.1 + esp * 0.95; base = 45; }
+    else { peso = 3.2 + esp * 0.5; base = 30; }
+    let extra = 0;
+    if (b.acabamento === 'escovado') extra += 14;
+    if (b.acabamento === 'oxidado') extra += 22;
+    if (String(b.gravacao).trim()) extra += 25;
+    if (b.tipo !== 'pingente' && b.pingente) { peso += 3.2; extra += 18; }
+    const preco = Math.round(peso * g + base + extra);
+    return { peso: peso.toFixed(1).replace('.', ','), preco };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const tel = String(this.props.telefone ?? '5511911124875');
+    const wa = 'https://wa.me/' + tel;
+    const mostrar3d = this.props.mostrar3d ?? true;
+    const r = s.rota;
+
+    const cats = CATS.map((c) => ({
+      ...c, n: PRODS.filter((p) => p.c === c.id).length + ' itens',
+      foto: FOTO(c.fid, 400), href: '#/catalogo/' + c.id,
+      estiloMini: 'flex:none;width:42px;height:42px;border-radius:9px;background-image:url("' + FOTO(c.fid, 200) + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+    }));
+
+    /* ---- catálogo ---- */
+    let lista = PRODS.filter((p) => (s.filtro === 'todas' ? true : s.filtro === 'ofertas' ? !!p.a : p.c === s.filtro));
+    if (s.ordem === 'menor') lista = [...lista].sort((a, b) => num(a.p) - num(b.p));
+    if (s.ordem === 'maior') lista = [...lista].sort((a, b) => num(b.p) - num(a.p));
+    const catAtual = CATS.find((c) => c.id === s.filtro);
+
+    /* ---- peça ---- */
+    const prod = PRODS.find((p) => p.id === s.param) || PRODS[0];
+    const relacionados = PRODS.filter((p) => p.c === prod.c && p.id !== prod.id).slice(0, 4);
+    const fotosPeca = [prod, ...relacionados].slice(0, 3).map((p) => FOTO(p.fid, 800));
+    const medidas = prod.c === 'correntes' ? ['45 cm', '50 cm', '60 cm', '70 cm']
+      : prod.c === 'pulseiras' ? ['18 cm', '21 cm', '23 cm']
+        : prod.c === 'aneis' ? ['16', '18', '20', '22'] : ['Único'];
+    const medidaSel = s.medida || (medidas.indexOf(prod.d3 && prod.d3.medida + ' cm') >= 0 ? prod.d3.medida + ' cm' : medidas[Math.min(2, medidas.length - 1)]);
+    const medidaNum = parseInt(medidaSel, 10);
+
+    const fidMontar = { corrente: 16124761, pulseira: 16304561, anel: 35409286, pingente: 16056798 }[s.b.tipo] || 16124761;
+    const specHome = { tipo: 'corrente', elo: 'cubano', esp: 4.5, medida: 60, acabamento: 'polido' };
+    const specPeca = { ...prod.d3, acabamento: prod.d3.acabamento || 'polido', medida: isNaN(medidaNum) ? prod.d3.medida : medidaNum };
+    const specMontar = {
+      tipo: s.b.tipo === 'pingente' ? 'pingente' : s.b.tipo,
+      elo: s.b.elo, esp: Number(s.b.esp), medida: Number(s.b.medida), acabamento: s.b.acabamento,
+      pingente: s.b.tipo === 'pingente' ? (s.b.pingente || 'placa') : s.b.pingente,
+      sinete: s.b.tipo === 'anel' && !!String(s.b.gravacao).trim(),
+      gravacao: String(s.b.gravacao).trim(),
+    };
+    if (mostrar3d) {
+      this.specAtual.home = specHome;
+      this.specAtual.peca = specPeca;
+      this.specAtual.montar = specMontar;
+      if (s.sheet) this.specAtual.sheet = s.sheet === 'montar' ? specMontar : s.sheet === 'peca' ? specPeca : specHome;
+      else delete this.specAtual.sheet;
+    }
+
+    /* ---- sacola ---- */
+    const itens = Object.keys(s.sacola).map((id) => {
+      const p = PRODS.find((x) => x.id === id);
+      const m = (this.montagens || {})[id];
+      const q = s.sacola[id];
+      const valor = p ? num(p.p) : m ? m.preco : 0;
+      return {
+        id, q, nome: p ? p.n : m ? m.nome : id,
+        spec: p ? p.s : m ? m.spec : '', linha: q + ' × ' + (p ? p.s : m ? m.spec : ''),
+        foto: p ? FOTO(p.fid, 200) : FOTO(16124761, 200),
+        estiloFoto: 'display:block;width:62px;height:62px;border-radius:10px;background-image:url("' + FOTO(p ? p.fid : 16124761, 200) + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+        estiloControles: 'display:flex;align-items:center;gap:8px;' + (s.largo ? 'grid-column:2/-1;margin-top:4px' : 'grid-column:1/-1;margin-top:6px;padding-top:10px;border-top:1px solid var(--border-1)'),
+        total: fmt(valor * q), bruto: valor * q,
+        antigo: p && p.a ? num(p.a) * q : valor * q,
+        menos: () => this.qtd(id, q - 1), mais: () => this.qtd(id, q + 1), remover: () => this.qtd(id, 0),
+      };
+    });
+    const subtotal = itens.reduce((a, i) => a + i.bruto, 0);
+    const economia = itens.reduce((a, i) => a + (i.antigo - i.bruto), 0);
+    const nSacola = itens.reduce((a, i) => a + i.q, 0);
+    const frete = s.entrega === 'correios' ? 24.9 : 0;
+
+    const opcao = (id, nome, detalhe, atual, set) => ({
+      id, nome, detalhe, on: () => set(id),
+      estilo: 'display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;padding:16px 18px;border-radius:14px;border:1px solid ' + (id === atual ? 'var(--border-2)' : 'var(--border-1)') + ';background:' + (id === atual ? 'var(--surface-forte)' : 'var(--surface-card)'),
+      marca: 'width:18px;height:18px;border-radius:50%;flex:none;border:1px solid ' + (id === atual ? 'var(--text-1)' : 'var(--border-2)') + ';background:' + (id === atual ? 'var(--text-1)' : 'transparent') + ';box-shadow:' + (id === atual ? 'inset 0 0 0 3px var(--surface-forte)' : 'none'),
+    });
+
+    /* ---- busca ---- */
+    const achados = s.q.trim()
+      ? PRODS.filter((p) => norm(p.n + ' ' + p.s + ' ' + p.c).includes(norm(s.q).trim())).map((p) => ({ nome: p.n, spec: p.s, valor: 'R$' + NB + p.p, foto: FOTO(p.fid, 200), href: '#/peca/' + p.id }))
+      : [];
+
+    const mt = this.montagem();
+    const b = s.b;
+
+    /* ---- montador em etapas ---- */
+    const defs = [
+      { k: 'tipo', nome: 'Peça', titulo: 'Que peça você quer montar?', apoio: 'A partir daqui as opções mudam conforme o tipo de peça.',
+        opcoes: [['corrente', 'Corrente', 'de 45 a 70 cm'], ['pulseira', 'Pulseira', 'de 18 a 23 cm'], ['anel', 'Anel', 'aro 16 a 22'], ['pingente', 'Pingente', 'cruz, placa ou medalha']],
+        valor: b.tipo,
+        set: (id) => this.setState((st) => ({
+          b: { ...st.b, tipo: id, medida: id === 'corrente' ? 60 : id === 'pulseira' ? 21 : id === 'anel' ? 18 : 0, esp: 4, pingente: id === 'pingente' ? 'placa' : '' },
+          feitos: st.b.tipo === id ? st.feitos : 0,
+        })) },
+      { k: 'elo', nome: 'Elo', titulo: 'Escolha o elo', apoio: 'O elo define o peso e o jeito que a peça cai no corpo.',
+        quando: b.tipo === 'corrente' || b.tipo === 'pulseira', valor: b.elo,
+        opcoes: [['cubano', 'Cubano', 'malha fechada, a mais pedida'], ['grumet', 'Grumet', 'elo torcido, clássico'], ['veneziana', 'Veneziana', 'malha quadrada, discreta'], ['cartier', 'Cartier', 'elo alongado'], ['baiana', 'Baiana', 'bola entre os elos']],
+        set: (id) => this.setB('elo', id) },
+      { k: 'modelo', nome: 'Modelo', titulo: 'Escolha o modelo', apoio: 'Todos saem com argola reforçada.',
+        quando: b.tipo === 'pingente', valor: b.pingente || 'placa',
+        opcoes: [['cruz', 'Cruz', 'vazada, 3 cm'], ['placa', 'Placa', 'aceita gravação'], ['medalha', 'Medalha', 'redonda, lisa']],
+        set: (id) => this.setB('pingente', id) },
+      { k: 'esp', nome: b.tipo === 'anel' ? 'Largura' : 'Espessura', titulo: b.tipo === 'anel' ? 'Largura do aro' : b.tipo === 'pingente' ? 'Tamanho do pingente' : 'Qual espessura?',
+        apoio: 'É o que mais muda o peso da prata — e o preço.',
+        valor: b.esp,
+        opcoes: (b.tipo === 'anel' ? [3, 4, 6, 8] : b.tipo === 'pingente' ? [3, 4, 5] : [2.5, 3, 4, 5, 6, 8])
+          .map((e) => [e, String(e).replace('.', ',') + ' mm', e <= 3 ? 'discreta' : e <= 4 ? 'o mais vendido' : e <= 6 ? 'presença no corpo' : 'peça pesada']),
+        set: (id) => this.setB('esp', Number(id)) },
+      { k: 'medida', nome: b.tipo === 'anel' ? 'Numeração' : 'Medida', titulo: b.tipo === 'anel' ? 'Qual o seu aro?' : 'Qual o comprimento?',
+        apoio: b.tipo === 'anel' ? 'Na dúvida, a gente mede na loja e ajusta depois.' : 'A gente confere a medida no WhatsApp antes de produzir.',
+        quando: b.tipo === 'corrente' || b.tipo === 'pulseira' || b.tipo === 'anel', valor: b.medida,
+        opcoes: (b.tipo === 'corrente' ? [[45, '45 cm', 'colada no pescoço'], [50, '50 cm', 'na clavícula'], [60, '60 cm', 'a mais pedida'], [70, '70 cm', 'no peito']]
+          : b.tipo === 'pulseira' ? [[18, '18 cm', 'punho fino'], [21, '21 cm', 'a mais pedida'], [23, '23 cm', 'punho largo']]
+            : [[16, 'Aro 16', ''], [18, 'Aro 18', 'o mais pedido'], [20, 'Aro 20', ''], [22, 'Aro 22', '']]),
+        set: (id) => this.setB('medida', Number(id)) },
+      { k: 'acabamento', nome: 'Acabamento', titulo: 'Acabamento da prata', apoio: 'Todos são feitos na bancada, no fim da produção.',
+        valor: b.acabamento,
+        opcoes: [['polido', 'Polido', 'espelhado, brilho cheio'], ['escovado', 'Escovado', 'fosco, marca menos'], ['oxidado', 'Oxidado', 'escurecido nos vãos']],
+        set: (id) => this.setB('acabamento', id) },
+      { k: 'pingente', nome: 'Pingente', titulo: 'Quer um pingente?', apoio: 'Vai montado na corrente, com argola reforçada.',
+        quando: b.tipo === 'corrente', valor: b.pingente,
+        opcoes: [['', 'Sem pingente', 'só a corrente'], ['cruz', 'Cruz', '+ R$ 18'], ['placa', 'Placa', 'aceita gravação'], ['medalha', 'Medalha', 'redonda, lisa']],
+        set: (id) => this.setB('pingente', id) },
+      { k: 'gravacao', nome: 'Gravação', titulo: 'Gravação', apoio: 'Até 14 caracteres. Deixe em branco se não quiser.' },
+      { k: 'resumo', nome: 'Resumo', titulo: 'Confira a sua peça', apoio: 'Se estiver tudo certo, a peça entra na fila da bancada.' },
+    ].filter((d) => d.quando !== false);
+
+    const idx = Math.max(0, Math.min(s.etapa, defs.length - 1, s.feitos));
+    const feitos = Math.min(s.feitos, defs.length - 1);
+    const def = defs[idx];
+    const rotuloVal = {
+      tipo: NOME_TIPO[b.tipo], elo: NOME_ELO[b.elo], modelo: b.pingente || 'Placa',
+      esp: String(b.esp).replace('.', ',') + ' mm',
+      medida: b.tipo === 'anel' ? 'Aro ' + b.medida : b.medida + ' cm',
+      acabamento: b.acabamento.charAt(0).toUpperCase() + b.acabamento.slice(1),
+      pingente: b.pingente ? b.pingente.charAt(0).toUpperCase() + b.pingente.slice(1) : 'Sem pingente',
+      gravacao: String(b.gravacao).trim() || 'Sem gravação',
+    };
+
+    const medidasB = b.tipo === 'corrente' ? [45, 50, 60, 70] : b.tipo === 'pulseira' ? [18, 21, 23] : b.tipo === 'anel' ? [16, 18, 20, 22] : [];
+    const espessuras = b.tipo === 'anel' ? [3, 4, 6, 8] : b.tipo === 'pingente' ? [3, 4, 5] : [2.5, 3, 4, 5, 6, 8];
+    const resumoPeca = b.tipo === 'corrente' || b.tipo === 'pulseira'
+      ? NOME_TIPO[b.tipo] + ' ' + (NOME_ELO[b.elo] || '').toLowerCase() + ' · ' + String(b.esp).replace('.', ',') + ' mm · ' + b.medida + ' cm'
+      : b.tipo === 'anel' ? 'Anel aro ' + b.medida + ' · ' + String(b.esp).replace('.', ',') + ' mm'
+        : 'Pingente ' + (b.pingente || 'placa') + ' · ' + String(b.esp).replace('.', ',') + ' mm';
+
+    const cardPeca = this.card(prod);
+    const favMarcado = s.favoritos.includes(prod.id);
+    const tituloCat = s.filtro === 'todas' ? 'Catálogo completo' : s.filtro === 'ofertas' ? 'Ofertas' : (catAtual ? catAtual.nome : 'Catálogo');
+    const idxFoto = Math.max(0, fotosPeca.indexOf(s.foto || fotosPeca[0]));
+    const addMont = () => this.add('m' + Date.now(), { nome: resumoPeca, spec: 'Montada sob encomenda · ' + s.b.acabamento, preco: mt.preco });
+    const confirmarPedido = () => { this.setState({ sacola: {} }); location.hash = '#/pronto'; };
+    const nPecas = nSacola + (nSacola === 1 ? ' peça' : ' peças');
+
+    const logadoConta = !!s.logado;
+    const PEDIDOS_CONTA = [
+      { n: 'Pedido 10473', data: '2 de setembro', estado: 'Na bancada', grupo: 'preparo', itens: 'Corrente cubana 60 cm · 4,5 mm · polida, com gravação ERK', valor: 'R$' + NB + '231,00', entrega: 'Motoboy · previsão 6 de setembro' },
+      { n: 'Pedido 10461', data: '28 de agosto', estado: 'Em transporte', grupo: 'preparo', itens: 'Pulseira cubana 21 cm · Pingente cruz', valor: 'R$' + NB + '230,00', entrega: 'Correios · código BR8842190' },
+      { n: 'Pedido 10428', data: '12 de agosto', estado: 'Entregue', grupo: 'entregue', itens: 'Corrente veneziana 45 cm · Brinco ponto de luz', valor: 'R$' + NB + '212,00', entrega: 'Entregue em Salto, SP' },
+      { n: 'Pedido 10390', data: '24 de julho', estado: 'Entregue', grupo: 'entregue', itens: 'Anel sinete aro 20 · gravado', valor: 'R$' + NB + '149,00', entrega: 'Retirado na loja' },
+    ];
+    const abaPedido = s.abaPedido || 'todos';
+    const pedidosVistos = abaPedido === 'todos' ? PEDIDOS_CONTA : PEDIDOS_CONTA.filter((o) => o.grupo === abaPedido);
+    const seloConta = (cor) => 'flex:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:980px;border:1px solid var(--border-2);background:var(--surface-forte);white-space:nowrap;color:' + cor;
+
+    const telas = {
+      conta: ['Sua conta', logadoConta ? 'Pedidos e dados' : 'Entre ou crie sua conta', '#/home'],
+      pedidos: ['Meus pedidos', PEDIDOS_CONTA.length + ' pedidos', '#/conta'],
+      dados: ['Dados da conta', 'Endereço, telefone e medidas', '#/conta'],
+      catalogo: [tituloCat, lista.length + ' peças · prata 925', '#/home'],
+      peca: [prod.n, (CATS.find((c) => c.id === prod.c) || {}).nome + ' · ' + medidaSel, '#/catalogo/' + prod.c],
+      montar: ['Montar a sua peça', 'Etapa ' + (idx + 1) + ' de ' + defs.length + ' · ' + def.nome, idx > 0 ? '' : '#/home'],
+      sacola: ['Sua sacola', nPecas + ' · etapa 1 de 3', '#/catalogo'],
+      checkout: ['Fechar o pedido', 'Etapa 2 de 3', '#/sacola'],
+      pronto: ['Pedido confirmado', 'Etapa 3 de 3', '#/home'],
+      busca: ['Buscar peça', achados.length ? achados.length + ' resultados' : 'Nome, elo ou categoria', '#/home'],
+      favoritos: ['Favoritos', s.favoritos.length + ' guardadas', '#/home'],
+    };
+    const tela = telas[r] || ['ERK Pratas', '', '#/home'];
+
+    const barras = {
+      peca: [cardPeca.valor, cardPeca.parcela, 'Adicionar', () => this.add(prod.id)],
+      montar: def.k === 'resumo'
+        ? [fmt(mt.preco), resumoPeca, 'Adicionar', addMont]
+        : ['Etapa ' + (idx + 1) + ' de ' + defs.length, idx < defs.length - 1 ? 'Depois: ' + defs[idx + 1].nome.toLowerCase() : '', 'Confirmar', () => this.confirmar(idx, () => ({}))],
+      sacola: [fmt(subtotal), nPecas + ' · frete a calcular', 'Fechar', () => { location.hash = '#/checkout'; }],
+      checkout: [fmt(subtotal + frete), 'Frete ' + (frete ? fmt(frete) : 'grátis'), 'Confirmar', confirmarPedido],
+    };
+    const temBarra = !s.largo && !!barras[r] && (r !== 'sacola' || itens.length > 0);
+    const barraAtual = barras[r] || ['', '', '', () => {}];
+
+    const sheetInfo = s.sheet === 'montar'
+      ? [resumoPeca, 'Sua peça sob encomenda', fmt(mt.preco), parcela(mt.preco), 'Adicionar', addMont]
+      : s.sheet === 'home'
+        ? ['Corrente cubana', 'Elo cubano · 4,5 mm · 60 cm', 'R$' + NB + '231,00', parcela(231), 'Ver a peça', () => { this.setState({ sheet: '' }); location.hash = '#/peca/p01'; }]
+        : [prod.n, prod.s, cardPeca.valor, cardPeca.parcela, 'Adicionar', () => this.add(prod.id)];
+
+    const abrirSheet = (k) => this.setState({ sheet: k });
+
+    return {
+      /* base */
+      wa, sim: true, tres: 3, mostrar3d, erro3d: s.erro3d,
+      estreito: !s.largo,
+      mostrarNav: s.largo,
+      mostrarNav: s.largo,
+      headerMobile: !s.largo,
+      heroMobile: !s.largo && r === 'home',
+      estiloTopoMobile: r === 'home'
+        ? 'position:sticky;top:0;z-index:50;padding:9px var(--pad) 5px'
+        : 'position:fixed;top:0;left:0;right:0;z-index:50;padding:9px var(--pad) 5px;background:var(--surface-pagina)',
+      topoFixo: !s.largo && r !== 'home',
+      estiloCtx: 'position:sticky;top:' + (s.largo ? 0 : 60) + 'px;z-index:40;background:var(--surface-pagina);border-bottom:1px solid var(--border-1)',
+      estiloProvasMobile: 'display:flex;flex-wrap:wrap;gap:7px 18px;padding:14px var(--pad) 0',
+      estiloHeroFoto: 'position:absolute;inset:0;background-image:url("' + FOTO(16109292, 1000) + '");background-size:cover;background-position:50% 24%',
+      menuNav: s.menu === 'nav',
+      abrirMenu: () => this.setState({ menu: 'nav' }),
+      linksMenu: [
+        ['Ver o estoque', '#/catalogo', PRODS.length + ' peças', 16124761],
+        ['Ofertas', '#/catalogo/ofertas', PRODS.filter((p) => p.a).length + ' peças', 16304561],
+        ['Montar a sua peça', '#/montar', 'sob encomenda', 4354570],
+        ['Buscar', '#/busca', 'nome, elo ou medida', 16109182],
+      ].map(([nome, href, apoio, fid]) => ({
+        nome, href, apoio,
+        estiloFoto: 'position:absolute;inset:0;background-image:url("' + FOTO(fid, 700) + '");background-size:cover;background-position:70% 40%;filter:brightness(.72) contrast(1.05) saturate(.9)',
+      })),
+      ctxMobile: !s.largo && r !== 'home',
+      tituloTela: tela[0], subTela: tela[1],
+      voltar: () => { if (tela[2]) location.hash = tela[2]; else this.irPasso(idx - 1); },
+      inline3d: mostrar3d && s.largo, botao3d: mostrar3d && !s.largo,
+      botao3dPeca: mostrar3d && s.vista !== '3d',
+      estiloPilula3d: 'position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 20px;border-radius:980px;background:rgba(13,15,18,.82);border:1px solid rgba(242,244,247,.28);color:#F2F4F7;font-size:12px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(8px)',
+      estiloBotao3d: 'display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:13px 16px;border-radius:14px;border:1px solid var(--border-2);background:var(--surface-forte);color:var(--text-1);font-size:14px',
+      estiloFoto3dHome: 'display:block;width:100%;height:100%;background-image:url("' + FOTO(16124761, 800) + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+      estiloFotoMontar: 'display:block;width:100%;height:100%;background-image:url("' + FOTO(fidMontar, 800) + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+      abrir3dHome: () => abrirSheet('home'),
+      abrir3dMontar: () => abrirSheet('montar'),
+      abrir3dPeca: () => { if (s.largo) this.setState({ vista: '3d' }); else abrirSheet('peca'); },
+      contadorFoto: (idxFoto + 1) + ' / ' + fotosPeca.length,
+      fotoAnterior: () => this.setState({ vista: 'foto', foto: fotosPeca[(idxFoto - 1 + fotosPeca.length) % fotosPeca.length] }),
+      fotoProxima: () => this.setState({ vista: 'foto', foto: fotosPeca[(idxFoto + 1) % fotosPeca.length] }),
+      sheetAberto: !!s.sheet && mostrar3d, ref3dSheet: this.refs3d.sheet,
+      fecharSheet: () => this.setState({ sheet: '' }),
+      sheetTitulo: sheetInfo[0], sheetSub: sheetInfo[1], sheetValor: sheetInfo[2],
+      sheetParcela: sheetInfo[3], sheetBotao: sheetInfo[4], sheetOn: sheetInfo[5],
+      barraAcao: temBarra, barraValor: barraAtual[0], barraSub: barraAtual[1], barraBotao: barraAtual[2], barraOn: barraAtual[3],
+      estiloTotal: 'border-top:1px solid var(--border-1);margin-top:18px;padding-top:18px;display:flex;gap:14px;' + (s.largo ? 'justify-content:space-between;align-items:flex-end' : 'flex-direction:column;align-items:flex-start;gap:6px'),
+      estiloTotalVal: s.largo ? 'text-align:right' : 'text-align:left',
+      estiloAside: 'flex:1 1 280px;min-width:0;background:var(--surface-card);border:1px solid var(--border-1);border-radius:14px;padding:clamp(20px,2.4vw,28px)' + (s.largo ? ';max-width:380px;position:sticky;top:96px' : ''),
+      estiloBotFiltro: s.largo ? 'position:relative' : 'position:relative;flex:1 1 0;min-width:0',
+      estiloPilula: 'display:inline-flex;align-items:center;gap:10px;width:100%;height:48px;padding:0 18px;border-radius:980px;border:1px solid var(--border-2);background:var(--surface-card);color:var(--text-1);font-size:14px',
+      estiloVeu: s.largo ? 'position:fixed;inset:0;z-index:70' : 'position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.58)',
+      estiloMenu: s.largo
+        ? 'position:absolute;z-index:80;top:56px;left:0;min-width:250px;background:var(--surface-card);border:1px solid var(--border-2);border-radius:14px;padding:8px;box-shadow:0 24px 60px rgba(0,0,0,.55);display:grid;gap:2px'
+        : 'position:fixed;z-index:80;left:0;right:0;bottom:0;max-height:76vh;overflow:auto;background:var(--surface-card);border-top:1px solid var(--border-2);border-radius:20px 20px 0 0;padding:6px 8px calc(16px + var(--safe));box-shadow:0 -20px 60px rgba(0,0,0,.6);display:grid;gap:2px',
+      garantias: GARANTIAS, cats,
+      fotoHero: FOTO(16109292, 1000), fotoOficinaPromo: FOTO(15955334, 1100),
+      fotoPresente: FOTO(15576969, 800), fotoOficina: FOTO(4354570, 900),
+      provas: [
+        { icone: 'puncao', texto: 'Punção 925' },
+        { icone: 'garantia', texto: 'Garantia vitalícia' },
+        { icone: 'entrega', texto: 'Motoboy na região' },
+      ],
+      q: s.q, setQ: (v) => this.setState({ q: v }), irBusca: () => { location.hash = '#/busca'; },
+      nSacola, temSacolaTopo: nSacola > 0,
+      navCats: [
+        { id: 'todas', nome: 'Início', icone: 'inicio', href: '#/home' },
+        ...CATS.map((c) => ({ id: c.id, nome: c.nome, icone: c.icone, href: '#/catalogo/' + c.id })),
+        { id: 'montar', nome: 'Montar a sua peça', icone: 'oficina', href: '#/montar' },
+        { id: 'ofertas', nome: 'Ofertas', icone: 'favorito', href: '#/catalogo/ofertas', promo: true },
+      ],
+      navAtivo: r === 'home' ? 'todas' : r === 'montar' ? 'montar' : r === 'catalogo' && s.filtro !== 'todas' ? s.filtro : '',
+      barraAtiva: r === 'home' ? 'inicio' : r === 'busca' ? 'busca' : r === 'montar' ? 'montar' : r === 'favoritos' ? 'favs' : r === 'sacola' ? 'sacola' : '',
+      pagamentos: ['CRÉDITO', 'DÉBITO', 'PIX', 'ATÉ 6X SEM JUROS'],
+      colunas: [
+        { titulo: 'Loja', itens: ['Correntes', 'Pulseiras', 'Anéis', 'Pingentes', 'Brincos', 'Conjuntos'] },
+        { titulo: 'Ajuda', itens: ['Como escolher a medida', 'Prazo e frete', 'Trocas e devolução', 'Garantia vitalícia', 'Guia da prata 925'] },
+        { titulo: 'Institucional', itens: ['A oficina', 'Monte a sua peça', 'Ver em 3D', 'WhatsApp', 'Onde estamos'] },
+      ],
+      fim: ['© 2026 ERK Pratas · Salto, SP'],
+
+      /* rotas */
+      ehHome: r === 'home', ehCatalogo: r === 'catalogo', ehPeca: r === 'peca', ehMontar: r === 'montar',
+      ehSacola: r === 'sacola', ehCheckout: r === 'checkout', ehPronto: r === 'pronto',
+      ehBusca: r === 'busca', ehFavoritos: r === 'favoritos', ehConta: r === 'conta',
+      contaLogada: logadoConta, contaDeslogada: !logadoConta,
+      entrarConta: () => this.setState({ logado: true }),
+      sairConta: () => this.setState({ logado: false }),
+      nFavoritos: s.favoritos.length,
+      vantagensConta: [
+        { d: 'M5 12h14M13 6l6 6-6 6', titulo: 'Acompanhe a bancada', texto: 'Você vê quando a peça entra em produção, no polimento e sai para entrega.' },
+        { d: 'M12 4l7 3.5V12c0 4.2-2.9 6.9-7 8-4.1-1.1-7-3.8-7-8V7.5z', titulo: 'Garantia no seu nome', texto: 'A nota e a garantia vitalícia ficam guardadas na conta.' },
+        { d: 'M4 8h16v9H4zM8 17v2M16 17v2', titulo: 'Medida e endereço salvos', texto: 'Aro, comprimento e endereço de entrega prontos na próxima compra.' },
+      ],
+      ehPedidos: r === 'pedidos', ehDados: r === 'dados',
+      nPedidosAbertos: PEDIDOS_CONTA.filter((o) => o.grupo === 'preparo').length + ' em aberto',
+      abasPedidos: this.chips([['todos', 'Todos'], ['preparo', 'Em preparo'], ['entregue', 'Entregues']], abaPedido, (id) => this.setState({ abaPedido: id })),
+      pedidosVistos: pedidosVistos.map((o) => Object.assign({}, o, {
+        estiloSelo: seloConta(o.grupo === 'entregue' ? 'var(--ok)' : 'var(--text-1)'),
+      })),
+      semPedidos: pedidosVistos.length === 0,
+      blocosDados: [
+        { titulo: 'QUEM COMPRA', linhas: [['Nome', 'Ana Ribeiro'], ['E-mail', 'ana.ribeiro@email.com'], ['Telefone', '(11) 91112-4875'], ['CPF', '381.***.***-04']] },
+        { titulo: 'ENTREGA', linhas: [['Endereço', 'Rua João Ribeiro, 148 · Centro'], ['Cidade', 'Salto, SP · 13320-140'], ['Preferência', 'Motoboy no mesmo dia']] },
+        { titulo: 'MEDIDAS SALVAS', linhas: [['Anel', 'Aro 18'], ['Corrente', '60 cm'], ['Pulseira', '21 cm']] },
+        { titulo: 'PAGAMENTO', linhas: [['Preferido', 'Pix'], ['Cartão salvo', 'Visa ···· 4471']] },
+      ].map((g) => ({
+        titulo: g.titulo,
+        linhas: g.linhas.map(([rotulo, valor], i) => ({
+          rotulo, valor,
+          estilo: 'display:flex;align-items:center;gap:14px;min-height:54px;padding:9px 0' + (i < g.linhas.length - 1 ? ';border-bottom:1px solid var(--border-1)' : ''),
+        })),
+      })),
+
+      /* home */
+      vendidas: PRODS.filter((p) => (p.tags || []).includes('Mais vendida')).slice(0, 4).map((p) => this.card(p)),
+      ref3dHome: this.refs3d.home,
+
+      /* catálogo */
+      tituloCatalogo: tituloCat,
+      apoioCatalogo: lista.length + ' peças · prata 925 legítima · pronta entrega',
+      chipsCat: this.chips(
+        [['todas', 'Todas'], ...CATS.map((c) => [c.id, c.nome]), ['ofertas', 'Ofertas']],
+        s.filtro, (id) => { location.hash = '#/catalogo/' + id; }
+      ),
+      chipsOrdem: this.chips(
+        [['relevancia', 'Relevantes'], ['menor', 'Menor preço'], ['maior', 'Maior preço']],
+        s.ordem, (id) => this.setState({ ordem: id })
+      ),
+      clsNavHome: r === 'home' ? 'is-on' : '',
+      clsNavEstoque: r === 'catalogo' && s.filtro !== 'ofertas' ? 'is-on' : '',
+      clsNavMontar: r === 'montar' ? 'is-on' : '',
+      clsNavOfertas: 'is-promo' + (r === 'catalogo' && s.filtro === 'ofertas' ? ' is-on' : ''),
+      estiloVisor: 'flex:1 1 430px;min-width:0' + (s.largo ? ';position:sticky;top:96px' : ''),
+      menuCat: s.menu === 'cat', menuOrd: s.menu === 'ord',
+      abrirCat: () => this.setState((st) => ({ menu: st.menu === 'cat' ? '' : 'cat' })),
+      abrirOrd: () => this.setState((st) => ({ menu: st.menu === 'ord' ? '' : 'ord' })),
+      fecharMenus: () => this.setState({ menu: '' }),
+      rotuloFiltro: s.filtro === 'todas' ? 'Todas as peças' : s.filtro === 'ofertas' ? 'Ofertas' : (catAtual ? catAtual.nome : 'Filtrar'),
+      rotuloOrdem: s.ordem === 'menor' ? 'Menor preço' : s.ordem === 'maior' ? 'Maior preço' : 'Mais relevantes',
+      opsCat: [['todas', 'Todas as peças', String(PRODS.length)], ...CATS.map((c) => [c.id, c.nome, String(PRODS.filter((p) => p.c === c.id).length)]), ['ofertas', 'Ofertas', String(PRODS.filter((p) => p.a).length)]]
+        .map(([id, nome, n]) => ({
+          id, nome, n,
+          estilo: 'display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;text-align:left;padding:' + (s.largo ? '11px 14px' : '15px 16px') + ';border-radius:10px;font-size:' + (s.largo ? '14px' : '15px') + ';background:' + (id === s.filtro ? 'var(--surface-forte)' : 'transparent') + ';color:var(--text-1)',
+          on: () => { this.setState({ menu: '' }); location.hash = '#/catalogo/' + id; },
+        })),
+      opsOrdem: [['relevancia', 'Mais relevantes'], ['menor', 'Menor preço'], ['maior', 'Maior preço']].map(([id, nome]) => ({
+        id, nome,
+        estilo: 'display:flex;align-items:center;gap:16px;width:100%;text-align:left;padding:' + (s.largo ? '11px 14px' : '15px 16px') + ';border-radius:10px;font-size:' + (s.largo ? '14px' : '15px') + ';background:' + (id === s.ordem ? 'var(--surface-forte)' : 'transparent') + ';color:var(--text-1)',
+        on: () => this.setState({ ordem: id, menu: '' }),
+      })),
+      lista: lista.map((p) => this.card(p)), temLista: lista.length > 0, semLista: lista.length === 0,
+
+      /* peça */
+      peca: cardPeca, pecaCat: (CATS.find((c) => c.id === prod.c) || {}).nome,
+      pecaCatHref: '#/catalogo/' + prod.c,
+      pecaSpec: prod.s + ' · punção 925 gravado',
+      estiloFotoPeca: 'width:100%;height:100%;background-image:url("' + (s.foto || fotosPeca[0]) + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+      minis: fotosPeca.map((f, i) => ({
+        estilo: 'display:block;width:100%;height:100%;background-image:url("' + f + '");background-size:cover;background-position:center;filter:var(--filtro-foto)',
+        estiloBotao: 'width:74px;height:74px;border-radius:10px;overflow:hidden;padding:0;background:var(--surface-forte);border:1px solid ' + (i === idxFoto && s.vista !== '3d' ? 'var(--text-1)' : 'var(--border-2)'),
+        on: () => this.setState({ foto: f, vista: 'foto' }),
+      })),
+      vistaFoto: s.vista !== '3d', vista3d: s.vista === '3d' && mostrar3d && s.largo,
+      ver3d: () => this.setState({ vista: '3d' }),
+      ref3dPeca: this.refs3d.peca,
+      rotuloMedida: prod.c === 'aneis' ? 'Aro' : 'Medida',
+      chipsMedida: this.chips(medidas, medidaSel, (id) => this.setState({ medida: id })),
+      addPeca: () => this.add(prod.id),
+      favPeca: () => this.fav(prod.id),
+      textoFav: favMarcado ? 'Guardado nos favoritos' : 'Guardar nos favoritos',
+      estiloFav: 'display:flex;align-items:center;justify-content:center;gap:9px;height:44px;border-radius:980px;font-size:13.5px;white-space:nowrap;transition:color 180ms cubic-bezier(.28,0,.12,1),background 180ms cubic-bezier(.28,0,.12,1);color:' + (favMarcado ? 'var(--acao-acento-bg)' : 'var(--text-2)') + ';background:' + (favMarcado ? 'color-mix(in oklab, var(--acao-acento-bg) 12%, transparent)' : 'transparent'),
+      preenchimentoFav: favMarcado ? 'currentColor' : 'none',
+      estiloCoracao: 'width:18px;height:18px;transition:fill 180ms cubic-bezier(.28,0,.12,1)' + (favMarcado ? ';animation:erkCoracao 420ms cubic-bezier(.28,0,.12,1)' : ''),
+      relacionados: relacionados.map((p) => this.card(p)),
+      ficha: [
+        { k: 'Material', v: 'Prata 925 legítima, com punção gravado' },
+        { k: 'Acabamento', v: 'Polimento espelhado feito na oficina' },
+        { k: 'Fecho', v: prod.c === 'correntes' || prod.c === 'pulseiras' ? 'Gaveta reforçada com trava dupla' : 'Não se aplica' },
+        { k: 'Medida', v: medidaSel },
+        { k: 'Peso aproximado', v: (prod.d3.tipo === 'corrente' || prod.d3.tipo === 'pulseira' ? (prod.d3.medida * prod.d3.esp * prod.d3.esp * 0.031).toFixed(0) : '6') + ' g' },
+        { k: 'Embalagem', v: 'Caixa própria com cartão' },
+      ],
+
+      /* montar */
+      ref3dMontar: this.refs3d.montar,
+      passos: defs.map((d, i) => ({
+        nome: 'Etapa ' + (i + 1) + ': ' + d.nome,
+        on: i <= feitos ? () => this.irPasso(i) : () => {},
+        estilo: 'flex:1 1 0;height:3px;border-radius:980px;padding:0;transition:background 180ms cubic-bezier(.28,0,.12,1);cursor:' + (i <= feitos ? 'pointer' : 'default') + ';background:' + (i < idx ? 'var(--text-2)' : i === idx ? 'var(--text-1)' : 'var(--border-1)'),
+      })),
+      passoNum: idx + 1, passoTotal: defs.length, passoNome: def.nome,
+      passoTitulo: def.titulo, passoApoio: def.apoio,
+      passoOpcoes: !!def.opcoes, passoGravacao: def.k === 'gravacao', passoResumo: def.k === 'resumo',
+      opcoesPasso: def.opcoes ? this.passoOpts(def.opcoes, def.valor, def.set, idx) : [],
+      temVoltarPasso: idx > 0,
+      passoAnterior: () => this.irPasso(idx - 1),
+      rodapeDesktop: s.largo,
+      rotuloAcaoPasso: def.k === 'resumo' ? 'Adicionar à sacola' : def.k === 'gravacao' ? (String(b.gravacao).trim() ? 'Confirmar a gravação' : 'Seguir sem gravação') : (idx < defs.length - 1 ? 'Confirmar e ir para ' + defs[idx + 1].nome.toLowerCase() : 'Confirmar'),
+      acaoPasso: def.k === 'resumo' ? addMont : () => this.confirmar(idx, () => ({})),
+      fichaMontagem: defs.filter((d) => d.opcoes || d.k === 'gravacao').map((d) => ({ k: d.nome, v: rotuloVal[d.k] })).concat([{ k: 'Peso estimado', v: mt.peso + ' g' }, { k: 'Material', v: 'Prata 925 com punção' }]),
+      grav: b.gravacao,
+      setGrav: (e) => this.setB('gravacao', e.target.value),
+      notaGravacao: b.tipo === 'anel' ? 'Com gravação a gente monta o anel com a placa do sinete.'
+        : b.pingente === 'placa' ? 'O nome sai gravado na placa, feito na bancada.'
+          : 'Gravação a laser no fecho ou na argola. Até 14 caracteres.',
+      resumoPeca, peso: mt.peso,
+      precoMontagem: fmt(mt.preco), parcelaMontagem: parcela(mt.preco),
+      addMontagem: addMont,
+
+      /* sacola e checkout */
+      itens, temSacola: itens.length > 0, vaziaSacola: itens.length === 0,
+      subtotal: fmt(subtotal), economia: '− ' + fmt(economia), parcelaTotal: parcela(subtotal),
+      freteFmt: frete ? fmt(frete) : 'grátis', totalFmt: fmt(subtotal + frete), parcelaFinal: parcela(subtotal + frete),
+      opEntrega: [
+        opcao('motoboy', 'Motoboy hoje', 'Salto, Itu, Indaiatuba e Cabreúva · grátis acima de R$' + NB + '150', s.entrega, (id) => this.setState({ entrega: id })),
+        opcao('correios', 'Envio para todo o Brasil', 'Rastreado · 3 a 7 dias úteis · R$' + NB + '24,90', s.entrega, (id) => this.setState({ entrega: id })),
+        opcao('retirada', 'Retirar na loja', 'Salto, SP · pronto em 2 horas · grátis', s.entrega, (id) => this.setState({ entrega: id })),
+      ],
+      opPagamento: [
+        opcao('pix', 'Pix', 'Confirmação na hora · 5% de desconto', s.pagamento, (id) => this.setState({ pagamento: id })),
+        opcao('credito', 'Cartão de crédito', 'Até 6x sem juros', s.pagamento, (id) => this.setState({ pagamento: id })),
+        opcao('whats', 'Combinar no WhatsApp', 'A gente confirma medida e frete antes de cobrar', s.pagamento, (id) => this.setState({ pagamento: id })),
+      ],
+      confirmar: confirmarPedido,
+
+      /* busca e favoritos */
+      sugestoes: this.chips(['Correntes', 'Pulseiras', 'Anéis', 'Pingentes', 'Brincos'], s.q, (id) => this.setState({ q: id })),
+      achados, semAchados: s.q.trim() !== '' && achados.length === 0,
+      textoSemAchados: 'Nada encontrado para "' + s.q + '".',
+      favs: PRODS.filter((p) => s.favoritos.includes(p.id)).map((p) => ({ nome: p.n, spec: p.s, valor: 'R$' + NB + p.p, foto: FOTO(p.fid, 200), href: '#/peca/' + p.id })),
+      semFavs: s.favoritos.length === 0,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

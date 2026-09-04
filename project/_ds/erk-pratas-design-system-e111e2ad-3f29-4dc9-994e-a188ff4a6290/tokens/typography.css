@@ -1,0 +1,54 @@
+/* ---------------------------------------------------------------
+   Tipografia — Cinzel para títulos e o logotipo, Montserrat para
+   tudo o que se lê. Os corpos vêm do mockup com meio pixel e tudo:
+   14.5px é 14.5px, não 14 nem 16.
+   --------------------------------------------------------------- */
+:root{
+  --font-display:Cinzel,Georgia,serif; /* @kind font */
+  --font-body:Montserrat,system-ui,-apple-system,sans-serif; /* @kind font */
+
+  /* corpo */
+  --fs-9:9.5px; /* @kind font */ /* linha do logo, badge da sacola */
+  --fs-10:10.5px; /* @kind font */ /* olho de categoria, tag */
+  --fs-11:11.5px; /* @kind font */ /* contador de itens, selo */
+  --fs-12:12px; /* @kind font */ /* apoio do rodapé, texto de garantia */
+  --fs-13:13px; /* @kind font */ /* chip, botão pequeno */
+  --fs-13-5:13.5px; /* @kind font */ /* link de rodapé, "ver tudo", parágrafo de apoio */
+  --fs-14:14px; /* @kind font */ /* item de lista, título de tile */
+  --fs-14-5:14.5px; /* @kind font */ /* nome de produto, botão */
+  --fs-15:15px; /* @kind font */ /* corpo padrão */
+  --fs-17:17px; /* @kind font */
+  --fs-19:19px; /* @kind font */ /* preço */
+  --fs-21:21px; /* @kind font */
+
+  /* display (fluidos) */
+  --fs-h1:clamp(30px,4.3vw,53px); /* @kind font */
+  --fs-h2:clamp(21px,2.5vw,32px); /* @kind font */
+  --fs-h2-larga:clamp(22px,2.6vw,34px); /* @kind font */
+  --fs-h3:clamp(20px,2.3vw,29px); /* @kind font */
+  --fs-sub-hero:clamp(14.5px,1.15vw,16.5px); /* @kind font */
+
+  /* peso */
+  --fw-light:300; /* @kind font */
+  --fw-regular:400; /* @kind font */
+  --fw-medium:500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:700; /* @kind font */
+
+  /* entrelinha */
+  --lh-tight:1.1; /* @kind font */
+  --lh-titulo:1.2; /* @kind font */
+  --lh-nome:1.3; /* @kind font */
+  --lh-apoio:1.45; /* @kind font */
+  --lh-corpo:1.6; /* @kind font */
+
+  /* tracking — o de caixa alta é a assinatura da marca */
+  --ls-logo:.08em; /* @kind font */
+  --ls-logo-sub:.24em; /* @kind font */
+  --ls-olho:.14em; /* @kind font */
+  --ls-rotulo:.12em; /* @kind font */
+  --ls-cat:.1em; /* @kind font */
+  --ls-selo:.09em; /* @kind font */
+  --ls-tag:.05em; /* @kind font */
+  --ls-preco:-.01em; /* @kind font */
+}

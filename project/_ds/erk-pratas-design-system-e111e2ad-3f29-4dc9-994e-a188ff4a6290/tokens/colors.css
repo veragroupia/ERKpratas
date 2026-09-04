@@ -1,0 +1,93 @@
+/* ---------------------------------------------------------------
+   Cor — ERK Pratas
+   Base: tinta (texto), linha (bordas), fundo (superfícies),
+   acento (vermelho de oferta/urgência), ok (verde de confirmação).
+   O tema claro é o padrão; o escuro é o mesmo esqueleto com os
+   valores trocados — nenhum token novo aparece no escuro.
+   --------------------------------------------------------------- */
+:root{
+  /* base — tinta */
+  --tinta:#0F1113;
+  --tinta-2:#5C626B;
+  --tinta-3:#8B9199;
+  /* base — linha */
+  --linha:#E5E8EC;
+  --linha-2:#D3D8DE;
+  /* base — fundo */
+  --fundo:#FFFFFF;
+  --fundo-2:#F4F6F8;
+  --fundo-3:#ECEFF3;
+  /* base — acento e semânticas */
+  --acento:#A8121A;
+  --acento-2:#C41B24;
+  --ok:#1B7A4B;
+  /* prata: cinza-azulado do metal, usado em degradês de hero */
+  --prata-1:#EDF0F4;
+  --prata-2:#E2E7ED;
+  --prata-3:#D5DBE3;
+
+  /* ---- apelidos semânticos (use estes nos componentes) ---- */
+  --text-1:var(--tinta);
+  --text-2:var(--tinta-2);
+  --text-3:var(--tinta-3);
+  --text-invertido:var(--fundo);
+  --text-preco:var(--tinta);
+  --text-antigo:var(--tinta-3);
+  --text-parcela:var(--ok);
+  --text-oferta:var(--acento);
+
+  --surface-pagina:var(--fundo);
+  --surface-card:#FFFFFF;
+  --surface-suave:var(--fundo-2);
+  --surface-forte:var(--fundo-3);
+  --surface-inversa:var(--tinta);
+
+  --border-1:var(--linha);
+  --border-2:var(--linha-2);
+  --border-foco:var(--tinta);
+
+  --acao-primaria-bg:var(--tinta);
+  --acao-primaria-fg:#FFFFFF;
+  --acao-primaria-hover:#2A2E34;
+  --acao-secundaria-bg:#FFFFFF;
+  --acao-secundaria-borda:var(--linha-2);
+  --acao-acento-bg:var(--acento);
+  --acao-acento-hover:var(--acento-2);
+
+  --badge-bg:var(--tinta);
+  --badge-fg:#FFFFFF;
+  --badge-off-bg:var(--acento);
+  --veu-sheet:rgba(8,9,11,.5);
+  --gradiente-hero:linear-gradient(115deg,var(--prata-1) 0%,var(--prata-2) 42%,var(--prata-3) 100%); /* @kind color */
+  --gradiente-banner:linear-gradient(90deg,rgba(10,11,13,.90) 0%,rgba(10,11,13,.70) 46%,rgba(10,11,13,.25) 100%); /* @kind color */
+  --gradiente-banner-mob:linear-gradient(180deg,rgba(8,9,11,.12) 0%,rgba(8,9,11,.50) 42%,rgba(8,9,11,.93) 100%); /* @kind color */
+  --filtro-foto:none; /* @kind other */
+}
+
+[data-theme="dark"]{
+  --tinta:#F2F4F7;
+  --tinta-2:#A2A9B3;
+  --tinta-3:#6E757F;
+  --linha:#23272D;
+  --linha-2:#343A42;
+  --fundo:#0D0F12;
+  --fundo-2:#14171B;
+  --fundo-3:#1C2026;
+  --acento:#D8363E;
+  --acento-2:#EA4750;
+  --ok:#3FD08A;
+
+  --surface-card:var(--fundo-2);
+  --acao-primaria-bg:var(--tinta);
+  --acao-primaria-fg:var(--fundo);
+  --acao-primaria-hover:#FFFFFF;
+  --acao-secundaria-bg:transparent;
+  --badge-bg:var(--tinta);
+  --badge-fg:var(--fundo);
+  --veu-sheet:rgba(0,0,0,.72);
+  --gradiente-hero:radial-gradient(120% 90% at 78% 18%,rgba(150,168,190,.20),transparent 62%),linear-gradient(115deg,#1B1F26 0%,#15181D 46%,#0E1114 100%); /* @kind color */
+  --gradiente-banner:linear-gradient(90deg,rgba(5,6,8,.94) 0%,rgba(5,6,8,.74) 46%,rgba(5,6,8,.30) 100%); /* @kind color */
+  --gradiente-banner-mob:linear-gradient(180deg,rgba(4,5,7,.20) 0%,rgba(4,5,7,.58) 42%,rgba(4,5,7,.96) 100%); /* @kind color */
+  /* foto de fundo branco pesa demais na grade escura */
+  --filtro-foto:brightness(.88) contrast(1.05) saturate(.95); /* @kind other */
+}

@@ -1,0 +1,18 @@
+/* Uma única curva para tudo: sai rápido, chega devagar. Sem bounce. */
+:root{
+  --ez:cubic-bezier(.28,0,.12,1); /* @kind other */
+  --t-rapido:.18s; /* @kind other */
+  --t:.22s; /* @kind other */
+  --t-medio:.26s; /* @kind other */
+  --t-lento:.5s; /* @kind other */
+  --alta-card:-3px; /* @kind other */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --t-rapido:0s; /* @kind other */
+    --t:0s; /* @kind other */
+    --t-medio:0s; /* @kind other */
+    --t-lento:0s; /* @kind other */
+    --alta-card:0px; /* @kind other */
+  }
+}

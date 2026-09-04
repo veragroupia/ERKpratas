@@ -1,0 +1,14 @@
+/* Reset e utilitários mínimos do mockup de origem. */
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--surface-pagina);color:var(--text-1);font-family:var(--font-body);font-size:var(--fs-15);line-height:var(--lh-corpo);-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+h1,h2,h3,h4,p,figure{margin:0}
+ul{margin:0;padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--text-1)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit}
+.erk-wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--pad)}
+.erk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.erk-serif{font-family:var(--font-display);font-weight:var(--fw-semibold);letter-spacing:.01em}
+a,button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
