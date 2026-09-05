@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/db';
-import { cartOwnerWhere, getCartToken, getCartItems } from '@/lib/cart';
+import { getCartTokenForWrite, getCartItems } from '@/lib/cart';
 import { getCurrentUserId } from '@/lib/session';
 
 const addSchema = z.union([
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 });
 
   const userId = await getCurrentUserId();
-  const token = getCartToken();
+  const token = getCartTokenForWrite();
   const data = parsed.data;
 
   if ('productId' in data) {

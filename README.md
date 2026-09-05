@@ -7,24 +7,31 @@ Implementação fullstack em Next.js a partir do design exportado do Claude Desi
 ## Stack
 
 - **Next.js 14** (App Router) + TypeScript
-- **Prisma** + SQLite (`web/prisma/schema.prisma`)
+- **Prisma** + **PostgreSQL** (`web/prisma/schema.prisma`)
 - **NextAuth** (credenciais + senha com hash) para contas de cliente
 - **three.js** para o visualizador 3D das peças (geometria procedural — elo por elo, na medida real)
 
 ## Rodando localmente
 
+Precisa de um Postgres rodando. O jeito mais rápido é com Docker (já incluso `web/docker-compose.yml`):
+
 ```bash
 cd web
+docker compose up -d      # sobe um Postgres local em localhost:5432
 npm install
-cp .env.example .env
+cp .env.example .env      # já aponta para o Postgres do docker compose acima
 npm run db:push
 npm run db:seed
 npm run dev
 ```
 
+Sem Docker: instale o Postgres localmente, crie um banco (`createdb erkpratas`) e ajuste `DATABASE_URL` em `.env` para apontar para ele antes dos passos `db:push`/`db:seed`/`dev`.
+
 Acesse `http://localhost:3000`.
 
 Uma conta de exemplo já vem no seed: `ana.ribeiro@email.com` / `erkpratas123`.
+
+**Erro comum:** se `prisma` reclamar de `DATABASE_URL` não encontrada, é porque o `.env` (que não vai para o git, de propósito) não foi criado — confira se rodou o `cp .env.example .env` acima.
 
 ## O que está implementado
 

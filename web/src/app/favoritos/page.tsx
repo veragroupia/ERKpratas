@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
 import { fmt, fotoUrl } from '@/lib/format';
-import { favoriteOwnerWhere } from '@/lib/favorites';
+import { favoriteOwnerWhereRead } from '@/lib/favorites';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { MobileContextBar } from '@/components/nav/MobileContextBar';
 
 export default async function FavoritosPage() {
-  const where = await favoriteOwnerWhere();
+  const where = await favoriteOwnerWhereRead();
   const favoritos = await prisma.favorite.findMany({ where, include: { product: true }, orderBy: { createdAt: 'desc' } });
 
   return (
