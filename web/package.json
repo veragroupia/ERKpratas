@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/setup-local.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/setup-local.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma db push --force-reset --accept-data-loss && prisma db seed",
     "postinstall": "prisma generate"
   },
   "dependencies": {
