@@ -1,25 +1,53 @@
-# CODING AGENTS: READ THIS FIRST
+# ERK Pratas
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Loja online da ERK Pratas — joalheria de prata 925 com oficina própria em Salto, SP. Catálogo, montador de peças personalizadas com visualização 3D, sacola, checkout e conta de cliente.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Implementação fullstack em Next.js a partir do design exportado do Claude Design (ver `project/` e `chats/` para a fonte original do design e o histórico de decisões).
 
-## What you should do — IMPORTANT
+## Stack
 
-**Read the chat transcripts first.** There are 2 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+- **Next.js 14** (App Router) + TypeScript
+- **Prisma** + SQLite (`web/prisma/schema.prisma`)
+- **NextAuth** (credenciais + senha com hash) para contas de cliente
+- **three.js** para o visualizador 3D das peças (geometria procedural — elo por elo, na medida real)
 
-**Read `project/ERK Pratas.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Rodando localmente
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+```bash
+cd web
+npm install
+cp .env.example .env
+npm run db:push
+npm run db:seed
+npm run dev
+```
 
-## About the design files
+Acesse `http://localhost:3000`.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+Uma conta de exemplo já vem no seed: `ana.ribeiro@email.com` / `erkpratas123`.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## O que está implementado
 
-## Bundle contents
+- Home, catálogo com filtro por categoria/ordenação, página de produto com carrossel de fotos e 3D, busca e favoritos.
+- Montador de peças ("Montar a sua peça") em fluxo por etapas, com preço calculado a partir do peso estimado da prata e visualização 3D ao vivo.
+- Sacola, checkout e confirmação de pedido, com carrinho e pedidos persistidos no banco (pagamento simulado — sem gateway real).
+- Conta de cliente: cadastro/login, pedidos, dados salvos (endereço, medidas, pagamento preferido).
+- Navegação responsiva: cabeçalho e trilho de categorias no desktop; pílula fixa, menu em tela cheia, barra de contexto e barra de ação fixa no celular — replicando o comportamento definido nas iterações do design original.
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `ERK Pratas - site responsivo` project files (HTML prototypes, assets, components)
+## O que ficou de fora (decisão tomada com o usuário)
+
+- Fotos de produto e telefone de contato ainda são os placeholders do mockup original (Pexels / número de exemplo) — trocar por material real da loja quando disponível.
+- Pagamento é simulado: o checkout confirma o pedido no banco, mas não processa cobrança de verdade (sem integração com Pix/cartão).
+- Nenhum deploy foi feito — o projeto está pronto para rodar localmente ou publicar em qualquer host que suporte Next.js.
+
+## Estrutura
+
+```
+web/                 # a aplicação Next.js
+  src/app/           # rotas (App Router) e API routes
+  src/components/    # componentes de UI, comércio, navegação, 3D
+  src/lib/           # acesso a dados, auth, carrinho, formatação
+  prisma/            # schema, seed e dados de catálogo
+project/             # design original exportado do Claude Design (referência)
+chats/               # histórico das conversas de design (referência)
+```
