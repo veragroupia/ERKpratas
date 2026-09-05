@@ -1,5 +1,7 @@
 # ERK Pratas
 
+**No ar:** https://site-production-0686.up.railway.app
+
 Loja online da ERK Pratas — joalheria de prata 925 com oficina própria em Salto, SP. Catálogo, montador de peças personalizadas com visualização 3D, sacola, checkout e conta de cliente.
 
 Implementação fullstack em Next.js a partir do design exportado do Claude Design (ver `project/` e `chats/` para a fonte original do design e o histórico de decisões).
@@ -40,6 +42,15 @@ Para limpar o banco e recarregar o catálogo do zero: `npm run db:reset`.
 - Fotos de produto e telefone de contato ainda são os placeholders do mockup original (Pexels / número de exemplo) — trocar por material real da loja quando disponível.
 - Pagamento é simulado: o checkout confirma o pedido no banco, mas não processa cobrança de verdade (sem integração com Pix/cartão).
 - Nenhum deploy foi feito. Para colocar no ar depois, o SQLite precisa dar lugar a um banco hospedado (Postgres, por exemplo): a maioria dos hosts não guarda arquivos entre um deploy e outro, então o `dev.db` seria apagado. É só trocar o `provider` em `prisma/schema.prisma` e a `DATABASE_URL` — o resto do código não muda.
+
+## Deploy
+
+Hospedado na Railway (projeto `erk-pratas`), com dois serviços:
+
+- **site** — a aplicação Next.js. Builda a partir de `web/` neste repositório, branch `main`; todo push para `main` gera um novo deploy automaticamente.
+- **Postgres** — o banco, com volume persistente (os dados sobrevivem aos deploys).
+
+O comando de start é `npm run start:prod`: sincroniza o schema e recarrega o catálogo (o seed é idempotente) antes de subir o servidor. As variáveis `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL` e `PORT` ficam configuradas no serviço pela Railway.
 
 ## Estrutura
 
