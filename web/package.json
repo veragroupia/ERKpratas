@@ -8,6 +8,7 @@
     "prebuild": "node scripts/setup-local.mjs",
     "build": "next build",
     "start": "next start",
+    "start:prod": "prisma db push --skip-generate && prisma db seed && next start",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
