@@ -459,15 +459,20 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   .chrome-mobile { display: block; }
 }
 
+/* ---------------- topo grudado ---------------- */
+/* O cabeçalho e o trilho de categorias grudam juntos: sticky no wrapper, e não
+   no header, senão ele rola para fora junto com o pai (que tem só a altura dele). */
+.site-topo { position: sticky; top: 0; z-index: 50; }
+
 /* ---------------- sacola / checkout: resumo lateral ---------------- */
 .cart-controles { display: flex; align-items: center; gap: 8px; grid-column: 1/-1; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border-1); }
 .cart-aside { flex: 1 1 280px; min-width: 0; background: var(--surface-card); border: 1px solid var(--border-1); border-radius: 14px; padding: clamp(20px, 2.4vw, 28px); }
-.cart-total { border-top: 1px solid var(--border-1); margin-top: 18px; padding-top: 18px; display: flex; gap: 14px; flex-direction: column; align-items: flex-start; }
-.cart-total-val { text-align: left; }
+.cart-total { border-top: 1px solid var(--border-1); margin-top: 18px; padding-top: 18px; display: flex; gap: 14px; justify-content: space-between; align-items: flex-end; }
+.cart-total-val { text-align: right; }
+/* o preço é um flex container — sem isto o valor encosta na esquerda do bloco */
+.cart-total-val .erk-preco { justify-content: flex-end; }
 @media (min-width: 900px) {
   .cart-controles { grid-column: 2/-1; margin-top: 4px; padding-top: 0; border-top: 0; }
   .cart-aside { max-width: 380px; position: sticky; top: 96px; }
-  .cart-total { flex-direction: row; justify-content: space-between; align-items: flex-end; }
-  .cart-total-val { text-align: right; }
 }
 

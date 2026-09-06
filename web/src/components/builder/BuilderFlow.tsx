@@ -9,13 +9,10 @@ import { FullscreenViewerSheet } from '../viewer3d/FullscreenViewerSheet';
 import { MobileContextBar } from '../nav/MobileContextBar';
 import { BottomActionBar } from '../nav/BottomActionBar';
 import { useLargo } from '@/lib/useLargo';
-import { fotoUrl } from '@/lib/format';
 import { GARANTIAS } from '@/lib/constants';
 import { GuaranteeStrip } from '../commerce/GuaranteeStrip';
 import type { PecaSpec } from '../viewer3d/jewelryViewer';
 import { ESTADO_INICIAL, buildSteps, montagem, resumoPeca, rotuloVal, precoFmt, type BuilderState, type TipoPeca } from './builderLogic';
-
-const FID_TIPO: Record<string, number> = { corrente: 16124761, pulseira: 16304561, anel: 35409286, pingente: 16056798 };
 
 function opcaoEstilo(ativo: boolean): React.CSSProperties {
   return {
@@ -127,8 +124,6 @@ export function BuilderFlow() {
           : 'Confirmar';
   const acaoPasso = def.k === 'resumo' ? adicionarSacola : confirmar;
 
-  const fotoFid = FID_TIPO[b.tipo] || 16124761;
-
   return (
     <>
       <MobileContextBar
@@ -155,13 +150,10 @@ export function BuilderFlow() {
                   {resumo}
                 </span>
               </div>
-              <div className="chrome-mobile" style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border-1)', background: 'var(--surface-forte)', aspectRatio: '4/3' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={fotoUrl(fotoFid, 800)}
-                  alt={resumo}
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'var(--filtro-foto)' }}
-                />
+              {/* No montador não entra foto de catálogo: a peça sob encomenda é
+                  sempre o modelo 3D, montado com as escolhas do cliente. */}
+              <div className="chrome-mobile" style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border-1)', background: 'var(--gradiente-hero)', aspectRatio: '4/3' }}>
+                <Viewer3D spec={spec} legenda={resumo} />
                 <span
                   style={{
                     position: 'absolute',
@@ -296,9 +288,9 @@ export function BuilderFlow() {
                       <dd style={{ fontSize: 14, margin: 0, textAlign: 'right' }}>Prata 925 com punção</dd>
                     </div>
                   </dl>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'flex-end', marginTop: 18 }}>
+                  <div className="cart-total" style={{ border: 0, marginTop: 18, paddingTop: 0 }}>
                     <span style={{ fontSize: 13.5, color: 'var(--text-2)' }}>Total</span>
-                    <div style={{ textAlign: 'right' }}>
+                    <div className="cart-total-val">
                       <p className="erk-preco erk-preco--g">
                         <b>{precoValor}</b>
                       </p>

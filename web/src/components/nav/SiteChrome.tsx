@@ -58,7 +58,7 @@ export function SiteChrome({
   return (
     <>
       {/* ---------- desktop ---------- */}
-      <div className="chrome-desktop">
+      <div className="chrome-desktop site-topo">
         <header className="erk-hdr">
           <div className="erk-hdr__in">
             <Logo />
