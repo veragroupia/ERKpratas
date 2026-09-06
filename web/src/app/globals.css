@@ -96,6 +96,9 @@
   --pad-hero: clamp(28px, 4.4vw, 58px);
   --pad-bloco: clamp(24px, 3vw, 40px);
   --h-header: 74px; --h-header-mob: 62px;
+  /* topo do celular: respiro de 9px + a pílula de 46px, sem folga embaixo,
+     para a barra de contexto encostar nela sem faixa no meio */
+  --h-topo-mob: 55px;
   --h-busca: 46px; --h-btn: 46px; --h-btn-sm: 38px; --h-btn-full: 42px;
   --h-barra: 62px; --alvo-toque: 44px;
   --safe: env(safe-area-inset-bottom, 0px);
@@ -283,7 +286,9 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   .erk-card .erk-preco b { font-size: 18px; }
   .erk-card .erk-btn { display: none; }
   .erk-card__mais { display: grid; }
-  .erk-parc { padding-right: 46px; }
+  /* só no card, para não passar por baixo do botão redondo de adicionar —
+     em resumos de sacola/checkout o parcelamento acompanha o total */
+  .erk-card .erk-parc { padding-right: 46px; }
 }
 
 .erk-tile { position: relative; background: var(--surface-card); border: 1px solid var(--border-1); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--e-2); }
@@ -459,10 +464,12 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   .chrome-mobile { display: block; }
 }
 
-/* ---------------- topo grudado ---------------- */
-/* O cabeçalho e o trilho de categorias grudam juntos: sticky no wrapper, e não
-   no header, senão ele rola para fora junto com o pai (que tem só a altura dele). */
-.site-topo { position: sticky; top: 0; z-index: 50; }
+/* ---------------- topo ---------------- */
+/* Só o cabeçalho acompanha a rolagem; o trilho de categorias fica no topo da
+   página e sai de cena ao rolar. Fixed (e não sticky) porque o wrapper tem a
+   altura do próprio topo — sticky ali rolaria para fora junto com o pai. */
+.erk-hdr { position: fixed; top: 0; left: 0; right: 0; z-index: 50; }
+.site-topo__espaco { height: var(--h-header); }
 
 /* ---------------- sacola / checkout: resumo lateral ---------------- */
 .cart-controles { display: flex; align-items: center; gap: 8px; grid-column: 1/-1; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border-1); }

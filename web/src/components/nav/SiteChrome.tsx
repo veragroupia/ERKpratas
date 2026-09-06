@@ -58,7 +58,7 @@ export function SiteChrome({
   return (
     <>
       {/* ---------- desktop ---------- */}
-      <div className="chrome-desktop site-topo">
+      <div className="chrome-desktop">
         <header className="erk-hdr">
           <div className="erk-hdr__in">
             <Logo />
@@ -70,12 +70,14 @@ export function SiteChrome({
             </div>
           </div>
         </header>
+        {/* compensa a altura do cabeçalho fixo */}
+        <div className="site-topo__espaco" />
         <CategoryNav itens={navItens} ativo={navAtivo} />
       </div>
 
       {/* ---------- celular: pílula fixa ---------- */}
       <div className="chrome-mobile">
-        <div style={pathname === '/' ? { position: 'sticky', top: 0, zIndex: 50, padding: '9px var(--pad) 5px' } : { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, padding: '9px var(--pad) 5px', background: 'var(--surface-pagina)' }}>
+        <div style={pathname === '/' ? { position: 'sticky', top: 0, zIndex: 50, padding: '9px var(--pad) 0' } : { position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, padding: '9px var(--pad) 0', background: 'var(--surface-pagina)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', height: 46, padding: '0 6px', borderRadius: 980, background: 'var(--surface-forte)', border: '1px solid var(--border-1)', color: 'var(--text-1)', boxShadow: '0 10px 30px rgba(0,0,0,.45)' }}>
             <span style={{ display: 'flex', alignItems: 'center' }}>
               <button type="button" onClick={() => setMenuAberto(true)} aria-label="Abrir o menu" style={{ width: 40, height: 40, display: 'grid', placeItems: 'center', color: 'inherit' }}>
@@ -100,7 +102,7 @@ export function SiteChrome({
             </span>
           </div>
         </div>
-        {pathname !== '/' ? <div style={{ height: 60 }} /> : null}
+        {pathname !== '/' ? <div style={{ height: 'var(--h-topo-mob)' }} /> : null}
       </div>
 
       {/* ---------- celular: menu tela cheia ---------- */}

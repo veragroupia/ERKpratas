@@ -19,7 +19,7 @@ export function MobileContextBar({
 }) {
   const router = useRouter();
   return (
-    <div className="chrome-mobile" style={{ position: 'sticky', top: 60, zIndex: 40, background: 'var(--surface-pagina)', borderBottom: '1px solid var(--border-1)' }}>
+    <div className="chrome-mobile" style={{ position: 'sticky', top: 'var(--h-topo-mob)', zIndex: 40, background: 'var(--surface-pagina)', borderBottom: '1px solid var(--border-1)' }}>
       <div style={{ maxWidth: 'var(--max)', marginInline: 'auto', padding: '8px var(--pad)', display: 'flex', alignItems: 'center', gap: 10 }}>
         <button
           type="button"
