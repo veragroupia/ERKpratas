@@ -13,6 +13,9 @@ import { useLargo } from '@/lib/useLargo';
 import type { PecaSpec } from '../viewer3d/jewelryViewer';
 import { ProductGridInteractive } from '../commerce/ProductGridInteractive';
 import type { ProductCardData } from '../commerce/ProductCard';
+import { Estrelas } from '../ui/Estrelas';
+import { Avaliacoes } from './Avaliacoes';
+import type { Depoimento, PermissaoAvaliar, ResumoAvaliacoes } from '@/lib/reviews';
 
 export type ProdutoDetalhe = {
   id: string;
@@ -34,7 +37,19 @@ export type ProdutoDetalhe = {
   pesoAproximado: string;
 };
 
-export function ProductDetail({ produto, relacionados }: { produto: ProdutoDetalhe; relacionados: ProductCardData[] }) {
+export function ProductDetail({
+  produto,
+  relacionados,
+  resumoAval,
+  depoimentos,
+  permissaoAval,
+}: {
+  produto: ProdutoDetalhe;
+  relacionados: ProductCardData[];
+  resumoAval: ResumoAvaliacoes;
+  depoimentos: Depoimento[];
+  permissaoAval: PermissaoAvaliar;
+}) {
   const largo = useLargo();
   const router = useRouter();
   const [vista, setVista] = useState<'foto' | '3d'>('foto');
@@ -167,6 +182,17 @@ export function ProductDetail({ produto, relacionados }: { produto: ProdutoDetal
                 <p style={{ fontSize: 10.5, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--text-3)' }}>{produto.cat}</p>
                 <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(26px,3.2vw,40px)', lineHeight: 1.14, marginTop: 8 }}>{produto.nome}</h1>
                 <p style={{ fontSize: 14, color: 'var(--text-2)', marginTop: 10 }}>{produto.spec} · punção 925 gravado</p>
+                {/* nota compacta: só existe se houver avaliação de verdade —
+                    peça sem depoimento não mostra "0,0" nem estrela vazia */}
+                {resumoAval.total > 0 ? (
+                  <p className="erk-nota" style={{ marginTop: 12 }}>
+                    <Estrelas nota={resumoAval.media} tamanho={15} />
+                    <b>{resumoAval.media.toFixed(1).replace('.', ',')}</b>
+                    <a href="#avaliacoes">
+                      {resumoAval.total} {resumoAval.total === 1 ? 'avaliação' : 'avaliações'}
+                    </a>
+                  </p>
+                ) : null}
                 <div style={{ marginTop: 20 }}>
                   <p className="erk-preco erk-preco--g">
                     <b>{produto.valor}</b>
@@ -247,8 +273,15 @@ export function ProductDetail({ produto, relacionados }: { produto: ProdutoDetal
           </div>
         </section>
 
+        <Avaliacoes
+          productId={produto.id}
+          resumo={resumoAval}
+          depoimentos={depoimentos}
+          permissao={permissaoAval}
+        />
+
         {relacionados.length ? (
-          <section className="erk-sec">
+          <section className="erk-sec erk-sec--suave">
             <div className="erk-wrap">
               <div className="erk-cab">
                 <div>

@@ -20,6 +20,7 @@ model User {
   favorites Favorite[]
   cartItems CartItem[]
   orders    Order[]
+  reviews   Review[]
   measurements Measurement?
 }
 
@@ -76,6 +77,28 @@ model Product {
   favorites  Favorite[]
   cartItems  CartItem[]
   orderItems OrderItem[]
+  reviews    Review[]
+}
+
+/// Depoimento de quem comprou. Só nasce de compra confirmada: a rota de
+/// criação exige um OrderItem desta peça num pedido do próprio usuário, e o
+/// par (peça, pessoa) é único — uma avaliação por cliente por peça, editável
+/// depois. Não existe semente de avaliação: a loja começa sem nenhuma.
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// pedido que comprova a compra, guardado para auditoria
+  orderId   Int?
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, userId])
+  @@index([productId])
 }
 
 model Favorite {

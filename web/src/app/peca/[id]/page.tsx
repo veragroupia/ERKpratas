@@ -4,6 +4,7 @@ import { fmt, fotoUrl, parcela } from '@/lib/format';
 import { getFavoriteProductIds } from '@/lib/favorites';
 import { toCard, medidasFor, productSpec } from '@/lib/products';
 import { ProductDetail, type ProdutoDetalhe } from '@/components/product/ProductDetail';
+import { getResumoAvaliacoes, getDepoimentos, getPermissaoAvaliar } from '@/lib/reviews';
 
 export default async function PecaPage({ params }: { params: { id: string } }) {
   const produto = await prisma.product.findUnique({ where: { id: params.id }, include: { category: true } });
@@ -16,6 +17,11 @@ export default async function PecaPage({ params }: { params: { id: string } }) {
   });
 
   const favoritos = await getFavoriteProductIds();
+  const [resumoAval, depoimentos, permissaoAval] = await Promise.all([
+    getResumoAvaliacoes(produto.id),
+    getDepoimentos(produto.id),
+    getPermissaoAvaliar(produto.id),
+  ]);
 
   const fotos = [produto, ...relacionados].slice(0, 3).map((p) => fotoUrl(p.photoId, 800));
   const medidas = medidasFor(produto.categoryId);
@@ -45,5 +51,13 @@ export default async function PecaPage({ params }: { params: { id: string } }) {
         : 6) + ' g',
   };
 
-  return <ProductDetail produto={detalhe} relacionados={relacionados.map((p) => toCard(p, favoritos))} />;
+  return (
+    <ProductDetail
+      produto={detalhe}
+      relacionados={relacionados.map((p) => toCard(p, favoritos))}
+      resumoAval={resumoAval}
+      depoimentos={depoimentos}
+      permissaoAval={permissaoAval}
+    />
+  );
 }
