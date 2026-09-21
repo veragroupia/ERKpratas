@@ -1,9 +1,13 @@
 import { prisma } from './db';
 import { getCurrentUserId } from './session';
 
-/** Estados de pedidos que já contam como compra feita para fins de avaliação.
-    "preparo" entra porque o pagamento já foi confirmado; cancelado não. */
-const STATUS_VALIDOS = ['preparo', 'producao', 'pronto', 'enviado', 'entregue'];
+/* O painel administrativo vive em outro repositório e evoluiu o vocabulário de
+   status do pedido (novo, pago, producao, polimento, embalado, enviado,
+   entregue, cancelado), enquanto a loja ainda grava "preparo". Em vez de
+   listar os estados válidos — lista que se desatualiza toda vez que um dos
+   dois lados inventa um status — a regra é pela negativa: vale qualquer
+   pedido que não tenha sido cancelado. */
+const STATUS_INVALIDOS = ['cancelado'];
 
 export type ResumoAvaliacoes = {
   media: number;
@@ -80,7 +84,7 @@ export async function getPermissaoAvaliar(productId: string): Promise<PermissaoA
   if (!userId) return { pode: false, motivo: 'anonimo' };
 
   const comprou = await prisma.orderItem.findFirst({
-    where: { productId, order: { userId, status: { in: STATUS_VALIDOS } } },
+    where: { productId, order: { userId, status: { notIn: STATUS_INVALIDOS } } },
     select: { id: true },
   });
   if (!comprou) return { pode: false, motivo: 'nao-comprou' };
@@ -98,7 +102,7 @@ export async function getPermissaoAvaliar(productId: string): Promise<PermissaoA
 /** Pedido mais recente que contém a peça — guardado na avaliação como prova. */
 export async function findPedidoDaCompra(productId: string, userId: string): Promise<number | null> {
   const item = await prisma.orderItem.findFirst({
-    where: { productId, order: { userId, status: { in: STATUS_VALIDOS } } },
+    where: { productId, order: { userId, status: { notIn: STATUS_INVALIDOS } } },
     orderBy: { order: { createdAt: 'desc' } },
     select: { orderId: true },
   });
