@@ -5,7 +5,7 @@ import { getCartTokenForWrite, getCartItems } from '@/lib/cart';
 import { getCurrentUserId } from '@/lib/session';
 
 const addSchema = z.union([
-  z.object({ productId: z.string(), quantity: z.number().int().min(1).max(20).default(1) }),
+  z.object({ productId: z.string(), quantity: z.number().int().min(1).max(20).default(1), medida: z.string().max(20).optional() }),
   z.object({
     customName: z.string(),
     customSpec: z.string(),
@@ -32,13 +32,16 @@ export async function POST(req: Request) {
   if ('productId' in data) {
     const product = await prisma.product.findUnique({ where: { id: data.productId } });
     if (!product) return NextResponse.json({ error: 'Peça não encontrada' }, { status: 404 });
-    const where = userId ? { userId, productId: data.productId } : { cartToken: token, productId: data.productId, userId: null };
+    const medida = ('medida' in data && data.medida) ? data.medida : null;
+    const where = userId
+      ? { userId, productId: data.productId, customSpec: medida }
+      : { cartToken: token, productId: data.productId, userId: null, customSpec: medida };
     const existing = await prisma.cartItem.findFirst({ where });
     if (existing) {
       await prisma.cartItem.update({ where: { id: existing.id }, data: { quantity: existing.quantity + data.quantity } });
     } else {
       await prisma.cartItem.create({
-        data: { cartToken: token, userId: userId ?? undefined, productId: data.productId, quantity: data.quantity },
+        data: { cartToken: token, userId: userId ?? undefined, productId: data.productId, quantity: data.quantity, customSpec: medida },
       });
     }
   } else {

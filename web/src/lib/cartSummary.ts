@@ -19,7 +19,8 @@ export async function getCartSummary() {
       return {
         id: r.id,
         nome: r.product.name,
-        spec: r.product.spec,
+        // a medida escolhida no card vence a spec genérica da peça
+        spec: r.customSpec || r.product.spec,
         foto: fotoUrl(r.product.photoId, 200),
         quantidade: r.quantity,
         precoUnit: r.product.price,

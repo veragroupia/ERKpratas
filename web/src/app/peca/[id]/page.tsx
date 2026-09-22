@@ -44,6 +44,7 @@ export default async function PecaPage({ params }: { params: { id: string } }) {
     medidaInicial,
     rotuloMedida: produto.categoryId === 'aneis' ? 'Aro' : 'Medida',
     buildSpec: { ...productSpec(produto), acabamento: 'polido' },
+    esgotado: produto.stock <= 0,
     fecho: produto.categoryId === 'correntes' || produto.categoryId === 'pulseiras' ? 'Gaveta reforçada com trava dupla' : 'Não se aplica',
     pesoAproximado:
       (produto.buildTipo === 'corrente' || produto.buildTipo === 'pulseira'

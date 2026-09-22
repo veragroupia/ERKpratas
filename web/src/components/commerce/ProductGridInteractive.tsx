@@ -15,11 +15,11 @@ export function ProductGridInteractive({ produtos, cols = 4 }: { produtos: Produ
     router.refresh();
   }
 
-  async function adicionar(id: string) {
+  async function adicionar(id: string, medida?: string) {
     await fetch('/api/cart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: id, quantity: 1 }),
+      body: JSON.stringify({ productId: id, quantity: 1, medida }),
     });
     router.refresh();
   }
@@ -27,7 +27,7 @@ export function ProductGridInteractive({ produtos, cols = 4 }: { produtos: Produ
   return (
     <ProductGrid cols={cols}>
       {produtos.map((p) => (
-        <ProductCard key={p.id} data={p} onFavorito={() => favoritar(p.id)} onAdicionar={() => adicionar(p.id)} />
+        <ProductCard key={p.id} data={p} onFavorito={() => favoritar(p.id)} onAdicionar={(medida) => adicionar(p.id, medida)} />
       ))}
     </ProductGrid>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Chip } from '../ui/Chip';
 import { EmptyState } from '../ui/EmptyState';
 
@@ -36,7 +37,7 @@ export function OrdersView({ pedidos }: { pedidos: PedidoResumo[] }) {
       </div>
       <div style={{ marginTop: 20, display: 'grid', gap: 10 }}>
         {vistos.map((o) => (
-          <div key={o.id} style={{ background: 'var(--surface-card)', border: '1px solid var(--border-1)', borderRadius: 14, padding: '16px 17px' }}>
+          <Link key={o.id} href={`/conta/pedidos/${o.id}`} className="ped-cartao" style={{ background: 'var(--surface-card)', border: '1px solid var(--border-1)', borderRadius: 14, padding: '16px 17px', display: 'block' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <span style={{ flex: 1, minWidth: 0, display: 'grid', gap: 3 }}>
                 <b style={{ fontSize: 14.5, fontWeight: 600 }}>{o.n}</b>
@@ -64,7 +65,7 @@ export function OrdersView({ pedidos }: { pedidos: PedidoResumo[] }) {
               <b style={{ flex: 1, fontSize: 15.5, fontWeight: 700, letterSpacing: '-.01em' }}>{o.valor}</b>
               <em style={{ fontStyle: 'normal', fontSize: 12.5, color: 'var(--text-3)' }}>{o.entrega}</em>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {vistos.length === 0 ? <EmptyState>Nenhum pedido nesse estado por enquanto.</EmptyState> : null}

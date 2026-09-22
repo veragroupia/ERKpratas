@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '../ui/Icon';
@@ -35,6 +35,7 @@ export type ProdutoDetalhe = {
   buildSpec: PecaSpec;
   fecho: string;
   pesoAproximado: string;
+  esgotado: boolean;
 };
 
 export function ProductDetail({
@@ -58,6 +59,22 @@ export function ProductDetail({
   const [favorito, setFavorito] = useState(produto.favoritoInicial);
   const [sheet, setSheet] = useState(false);
   const [pulso, setPulso] = useState(false);
+  const toqueX = useRef<number | null>(null);
+
+  const passarFoto = (passo: number) =>
+    setFotoIdx((i) => (i + passo + produto.fotos.length) % produto.fotos.length);
+
+  /* Deslizar entre as fotos no celular. O gesto só conta como troca acima de
+     40px, para rolagem vertical da página não disparar a navegação sem querer. */
+  const aoTocar = {
+    onTouchStart: (e: React.TouchEvent) => { toqueX.current = e.touches[0].clientX; },
+    onTouchEnd: (e: React.TouchEvent) => {
+      if (toqueX.current === null || produto.fotos.length < 2) return;
+      const dx = e.changedTouches[0].clientX - toqueX.current;
+      toqueX.current = null;
+      if (Math.abs(dx) > 40) passarFoto(dx < 0 ? 1 : -1);
+    },
+  };
 
   const medidaNum = parseInt(medida, 10);
   const spec: PecaSpec = useMemo(() => ({ ...produto.buildSpec, medida: isNaN(medidaNum) ? produto.buildSpec.medida : medidaNum }), [produto.buildSpec, medidaNum]);
@@ -118,7 +135,7 @@ export function ProductDetail({
           <div className="erk-wrap">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(22px,3.2vw,52px)', alignItems: 'flex-start' }}>
               <div style={{ flex: '1 1 430px', minWidth: 0 }}>
-                <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border-1)', background: 'var(--surface-forte)', aspectRatio: '1/1' }}>
+                <div {...aoTocar} style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border-1)', background: 'var(--surface-forte)', aspectRatio: '1/1', touchAction: 'pan-y' }}>
                   {vista === 'foto' ? (
                     <>
                       <div role="img" aria-label={produto.nome} style={{ width: '100%', height: '100%', backgroundImage: `url("${produto.fotos[fotoIdx]}")`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'var(--filtro-foto)' }} />
@@ -126,7 +143,7 @@ export function ProductDetail({
                         {fotoIdx + 1} / {produto.fotos.length}
                       </span>
                       {produto.fotos.length > 1 ? (
-                        <>
+                        <div className="chrome-desktop">
                           <button
                             type="button"
                             aria-label="Foto anterior"
@@ -143,7 +160,7 @@ export function ProductDetail({
                           >
                             <Icon name="seta" size={19} />
                           </button>
-                        </>
+                        </div>
                       ) : null}
                       <button type="button" onClick={abrir3d} style={pilula3d}>
                         <Icon name="oficina" size={17} />
@@ -160,7 +177,16 @@ export function ProductDetail({
                   )}
                 </div>
                 {produto.fotos.length > 1 ? (
-                  <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                  <div className="chrome-mobile erk-pontos" aria-hidden="true">
+                    {produto.fotos.map((f, i) => (
+                      <span key={f} className={i === fotoIdx && vista !== '3d' ? 'is-on' : undefined} />
+                    ))}
+                  </div>
+                ) : null}
+                {/* miniaturas só no desktop: no celular o deslize navega e elas
+                    roubavam altura útil da dobra */}
+                {produto.fotos.length > 1 ? (
+                  <div className="chrome-desktop" style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
                     {produto.fotos.map((f, i) => (
                       <button
                         key={f}
@@ -208,12 +234,26 @@ export function ProductDetail({
                     </Chip>
                   ))}
                 </div>
-                <div style={{ display: 'grid', gap: 10, marginTop: 26 }}>
-                  <div className="chrome-desktop">
-                    <button type="button" className="erk-btn erk-btn--p erk-btn--full" onClick={adicionar}>
-                      Adicionar à sacola
-                    </button>
+                {produto.esgotado ? (
+                  <div className="erk-esgotado">
+                    <b>Esgotado no estoque</b>
+                    <span>
+                      Esta peça saiu, mas a oficina faz igual sob encomenda — mesma medida, mesmo elo, feita para você.
+                    </span>
                   </div>
+                ) : null}
+                <div style={{ display: 'grid', gap: 10, marginTop: 26 }}>
+                  {produto.esgotado ? (
+                    <Link className="erk-btn erk-btn--p erk-btn--full" href={`/montar?base=${produto.id}`}>
+                      Encomendar esta peça
+                    </Link>
+                  ) : (
+                    <div className="chrome-desktop">
+                      <button type="button" className="erk-btn erk-btn--p erk-btn--full" onClick={adicionar}>
+                        Adicionar à sacola
+                      </button>
+                    </div>
+                  )}
                   <a className="erk-btn erk-btn--s erk-btn--full" href="https://wa.me/5511911124875" target="_blank" rel="noopener noreferrer">
                     Tirar dúvida no WhatsApp
                   </a>
@@ -297,7 +337,9 @@ export function ProductDetail({
         ) : null}
       </main>
 
-      <BottomActionBar valor={produto.valor} sub={produto.parcela} botao="Adicionar" onClick={adicionar} />
+      {produto.esgotado ? null : (
+        <BottomActionBar valor={produto.valor} sub={produto.parcela} botao="Adicionar" onClick={adicionar} />
+      )}
 
       <FullscreenViewerSheet
         aberto={sheet}

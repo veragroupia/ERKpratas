@@ -66,7 +66,8 @@ export function SiteChrome({
             <div className="erk-acoes">
               <IconButton icone="conta" rotulo="Conta" href="/conta" />
               <IconButton icone="favorito" rotulo="Favoritos" href="/favoritos" />
-              <IconButton icone="sacola" rotulo="Sacola" href="/sacola" contador={cartCount || undefined} />
+              <IconButton icone="entrega" rotulo="Pedidos" href="/conta/pedidos" />
+              <IconButton icone="sacola" rotulo="Sacola" href="/sacola" contador={cartCount || undefined} className="alvo-sacola" />
             </div>
           </div>
         </header>
@@ -91,7 +92,7 @@ export function SiteChrome({
               <Link href="/busca" aria-label="Buscar" style={{ width: 40, height: 40, display: 'grid', placeItems: 'center', color: 'inherit' }}>
                 <Icon name="busca" size={20} />
               </Link>
-              <Link href="/sacola" aria-label="Sacola" style={{ position: 'relative', width: 40, height: 40, display: 'grid', placeItems: 'center', color: 'inherit' }}>
+              <Link href="/sacola" aria-label="Sacola" data-alvo-sacola style={{ position: 'relative', width: 40, height: 40, display: 'grid', placeItems: 'center', color: 'inherit' }}>
                 <Icon name="sacola" size={20} />
                 {cartCount > 0 ? (
                   <span style={{ position: 'absolute', top: 6, right: 5, minWidth: 17, height: 17, padding: '0 4px', borderRadius: 980, background: 'var(--acao-acento-bg)', color: '#fff', fontSize: 10.5, fontWeight: 600, display: 'grid', placeItems: 'center' }}>
@@ -173,6 +174,10 @@ export function SiteChrome({
               <Link href="/conta" onClick={() => setMenuAberto(false)} style={{ display: 'flex', alignItems: 'center', gap: 12, minHeight: 52, fontSize: 14.5, borderBottom: '1px solid var(--border-1)' }}>
                 <Icon name="conta" size={18} style={{ color: 'var(--text-3)' }} />
                 Sua conta
+              </Link>
+              <Link href="/conta/pedidos" onClick={() => setMenuAberto(false)} style={{ display: 'flex', alignItems: 'center', gap: 12, minHeight: 52, fontSize: 14.5, borderBottom: '1px solid var(--border-1)' }}>
+                <Icon name="entrega" size={18} style={{ color: 'var(--text-3)' }} />
+                Meus pedidos
               </Link>
               <Link href="/favoritos" onClick={() => setMenuAberto(false)} style={{ display: 'flex', alignItems: 'center', gap: 12, minHeight: 52, fontSize: 14.5, borderBottom: '1px solid var(--border-1)' }}>
                 <Icon name="favorito" size={18} style={{ color: 'var(--text-3)' }} />

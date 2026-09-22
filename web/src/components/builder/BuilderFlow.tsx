@@ -41,10 +41,10 @@ function marcaEstilo(ativo: boolean): React.CSSProperties {
   };
 }
 
-export function BuilderFlow() {
+export function BuilderFlow({ inicial }: { inicial?: BuilderState }) {
   const largo = useLargo();
   const router = useRouter();
-  const [b, setB] = useState<BuilderState>(ESTADO_INICIAL);
+  const [b, setB] = useState<BuilderState>(inicial ?? ESTADO_INICIAL);
   const [etapa, setEtapa] = useState(0);
   const [feitos, setFeitos] = useState(0);
   const [sheet, setSheet] = useState(false);

@@ -19,10 +19,25 @@ export function productSpec(p: Product): PecaSpec {
   };
 }
 
+/** Frase de urgência no canto da foto. Estoque curto vence oferta: saber que
+    está acabando pesa mais na decisão do que saber que está barato. */
+function destaqueDe(p: Product): string | undefined {
+  if (p.stock <= 0) return 'Esgotado';
+  if (p.stock <= 3) return p.stock === 1 ? 'Última peça!' : `Últimas ${p.stock}!`;
+  if (p.oldPrice && p.oldPrice > p.price) {
+    const off = Math.round((1 - p.price / p.oldPrice) * 100);
+    return off >= 25 ? 'Oferta imperdível' : 'Em oferta';
+  }
+  return undefined;
+}
+
 export function toCard(p: ProductWithCategory, favoritos: string[]): ProductCardData {
   const tags: string[] = JSON.parse(p.tags || '[]');
   const desconto = p.oldPrice ? '-' + Math.round((1 - p.price / p.oldPrice) * 100) + '%' : undefined;
   return {
+    medidas: medidasFor(p.categoryId),
+    destaque: destaqueDe(p),
+    esgotado: p.stock <= 0,
     id: p.id,
     nome: p.name,
     categoria: p.category.name,

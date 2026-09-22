@@ -277,8 +277,25 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
 .erk-card__spec { font-size: var(--fs-12); color: var(--text-2); margin-top: 3px; }
 .erk-card .erk-preco { margin-top: 11px; }
 .erk-card .erk-btn { margin-top: var(--e-7); }
-.erk-card__mais { display: none; position: absolute; right: 10px; bottom: 14px; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-inversa); color: var(--surface-pagina); place-items: center; }
-.erk-card__mais svg { width: 19px; height: 19px; }
+/* botão de sacola: mora no canto inferior direito da FOTO, não do corpo do
+   card — assim o polegar alcança sem cobrir preço nem nome */
+.erk-card__sacola { position: absolute; right: 10px; bottom: 10px; width: 42px; height: 42px; border-radius: 50%; background: var(--surface-inversa); color: var(--surface-pagina); display: grid; place-items: center; z-index: 3; box-shadow: var(--sh-selo); transition: transform 180ms var(--ez), background 180ms var(--ez); }
+.erk-card__sacola svg { width: 19px; height: 19px; }
+.erk-card__sacola:hover { transform: scale(1.07); }
+.erk-card__sacola:active { transform: scale(.94); }
+.erk-card__sacola.is-on { background: var(--acento); color: #fff; }
+
+/* frase de urgência no canto oposto, para não brigar com o botão */
+.erk-card__destaque { position: absolute; left: 10px; bottom: 10px; z-index: 3; max-width: calc(100% - 66px); font-size: var(--fs-10); font-weight: var(--fw-semibold); letter-spacing: var(--ls-selo); text-transform: uppercase; color: var(--tinta); background: rgba(13, 15, 18, .82); border: 1px solid var(--border-2); border-radius: var(--r-tag); padding: 5px 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* lista de medidas que o botão de sacola abre */
+.erk-card__medidas { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 5; background: var(--surface-forte); border: 1px solid var(--border-2); border-radius: var(--r-s); padding: 11px 12px; box-shadow: var(--sh-card); }
+.erk-card__medidas p { font-size: var(--fs-10); letter-spacing: var(--ls-tag); text-transform: uppercase; color: var(--text-3); margin: 0 0 8px; }
+/* grade de duas colunas: no card estreito do celular o flex empilhava um
+   botão por linha e a caixa ficava mais alta que a própria foto */
+.erk-card__medidas > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); gap: 6px; }
+.erk-card__medidas button { min-height: 38px; padding: 0 8px; border-radius: var(--r-pill); border: 1px solid var(--border-2); background: var(--surface-card); color: var(--text-1); font-size: var(--fs-13); white-space: nowrap; transition: var(--t-rapido) var(--ez); }
+.erk-card__medidas button:hover { background: var(--surface-inversa); color: var(--surface-pagina); border-color: var(--surface-inversa); }
 @media (hover: none) {
   .erk-card__fav { opacity: 1; width: 40px; height: 40px; }
   .erk-card__fav svg { width: 18px; height: 18px; }
@@ -292,10 +309,7 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   .erk-card__spec { font-size: 12.5px; }
   .erk-card .erk-preco b { font-size: 18px; }
   .erk-card .erk-btn { display: none; }
-  .erk-card__mais { display: grid; }
-  /* só no card, para não passar por baixo do botão redondo de adicionar —
-     em resumos de sacola/checkout o parcelamento acompanha o total */
-  .erk-card .erk-parc { padding-right: 46px; }
+  .erk-card__sacola { width: 44px; height: 44px; }
 }
 
 .erk-tile { position: relative; background: var(--surface-card); border: 1px solid var(--border-1); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--e-2); }
@@ -583,3 +597,78 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
   .erk-aval-apagar { margin-left: 0; padding-top: var(--e-3); }
 }
 
+
+/* ===================================================================
+   pontos de posição das fotos (celular, no lugar das miniaturas)
+   =================================================================== */
+.erk-pontos { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+.erk-pontos span { width: 6px; height: 6px; border-radius: 50%; background: var(--border-2); transition: background 220ms var(--ez), width 220ms var(--ez); }
+.erk-pontos span.is-on { background: var(--tinta); width: 18px; border-radius: 980px; }
+
+/* aviso de peça esgotada na página da peça */
+.erk-esgotado { margin-top: 22px; display: grid; gap: 5px; padding: 14px 16px; border-radius: var(--r-s); background: var(--surface-card); border: 1px solid var(--border-2); border-left: 3px solid var(--acento); }
+.erk-esgotado b { font-size: var(--fs-14); }
+.erk-esgotado span { font-size: var(--fs-13); color: var(--text-2); line-height: var(--lh-apoio); }
+
+/* ===================================================================
+   pedido do cliente — cabeçalho, linha do tempo, itens e totais
+   =================================================================== */
+.ped-cartao { transition: border-color 180ms var(--ez), background 180ms var(--ez); }
+.ped-cartao:hover { border-color: var(--border-2); background: var(--surface-forte); }
+
+.ped-cab { display: flex; align-items: flex-start; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border-1); }
+.ped-cab h1 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: clamp(22px, 3vw, 30px); line-height: var(--lh-titulo); }
+.ped-cab p { font-size: var(--fs-13); color: var(--text-3); margin-top: 5px; }
+.ped-cab strong { margin-left: auto; font-size: var(--fs-19); font-weight: var(--fw-semibold); letter-spacing: var(--ls-preco); white-space: nowrap; }
+
+.ped-aviso { margin-top: 20px; display: grid; gap: 5px; padding: 15px 16px; border-radius: var(--r-s); background: var(--surface-card); border: 1px solid var(--border-2); border-left: 3px solid var(--acento); }
+.ped-aviso b { font-size: var(--fs-14); }
+.ped-aviso span { font-size: var(--fs-13); color: var(--text-2); }
+
+.ped-bloco { margin-top: clamp(22px, 3vw, 30px); }
+.ped-bloco h2 { font-size: var(--fs-10); letter-spacing: var(--ls-rotulo); text-transform: uppercase; color: var(--text-3); margin-bottom: 14px; }
+
+.ped-linha { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.ped-linha li { position: relative; display: flex; gap: 14px; padding-bottom: 18px; }
+/* o fio que liga os passos para no último, senão sobra um risco solto embaixo */
+.ped-linha li:not(:last-child)::before { content: ""; position: absolute; left: 6px; top: 16px; bottom: 0; width: 1px; background: var(--border-2); }
+.ped-linha li.is-feito:not(:last-child)::before { background: var(--tinta); }
+.ped-linha__ponto { flex: none; width: 13px; height: 13px; margin-top: 4px; border-radius: 50%; border: 1px solid var(--border-2); background: var(--surface-pagina); z-index: 1; }
+.ped-linha li.is-feito .ped-linha__ponto { background: var(--tinta); border-color: var(--tinta); }
+.ped-linha li.is-agora .ped-linha__ponto { box-shadow: 0 0 0 4px rgba(242, 244, 247, .14); }
+.ped-linha div { display: grid; gap: 2px; min-width: 0; }
+.ped-linha b { font-size: var(--fs-14); font-weight: var(--fw-medium); color: var(--text-3); }
+.ped-linha li.is-feito b { color: var(--text-1); font-weight: var(--fw-semibold); }
+.ped-linha em { font-style: normal; font-size: var(--fs-12); color: var(--text-3); }
+.ped-linha time { font-size: var(--fs-11); color: var(--text-3); margin-top: 2px; }
+
+.ped-onde { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; padding: 13px 14px; border-radius: var(--r-s); background: var(--surface-card); border: 1px solid var(--border-1); font-size: var(--fs-13); color: var(--text-2); line-height: var(--lh-apoio); }
+.ped-onde svg { flex: none; margin-top: 2px; color: var(--text-3); }
+.ped-onde b { color: var(--text-1); }
+
+.ped-itens { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.ped-itens li { display: flex; align-items: center; gap: 13px; }
+.ped-itens__fig { flex: none; width: 58px; height: 58px; border-radius: var(--r-fig-s); background-size: cover; background-position: center; background-color: var(--surface-forte); filter: var(--filtro-foto); }
+.ped-itens div { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ped-itens b { font-size: var(--fs-14); font-weight: var(--fw-semibold); }
+.ped-itens em { font-style: normal; font-size: var(--fs-12); color: var(--text-2); }
+.ped-itens div > span { font-size: var(--fs-12); color: var(--text-3); }
+.ped-itens strong { flex: none; font-size: var(--fs-14); font-weight: var(--fw-semibold); white-space: nowrap; }
+
+.ped-kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 0 clamp(18px, 3vw, 40px); margin: 0; }
+.ped-kv > div { padding: 13px 0; border-top: 1px solid var(--border-1); }
+.ped-kv dt { font-size: var(--fs-10); letter-spacing: var(--ls-rotulo); text-transform: uppercase; color: var(--text-3); }
+.ped-kv dd { margin: 5px 0 0; font-size: var(--fs-14); }
+
+.ped-total { display: grid; grid-template-columns: 1fr auto; gap: 9px 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-1); font-size: var(--fs-13-5); }
+.ped-total span { color: var(--text-2); }
+.ped-total b { text-align: right; font-weight: var(--fw-medium); }
+.ped-total__ok { color: var(--ok); }
+.ped-total__f { font-size: var(--fs-17); font-weight: var(--fw-semibold); color: var(--text-1); padding-top: 8px; border-top: 1px solid var(--border-1); }
+
+@media (max-width: 860px) {
+  .ped-cab { flex-wrap: wrap; }
+  .ped-cab strong { margin-left: 0; flex-basis: 100%; }
+  .ped-itens__fig { width: 52px; height: 52px; }
+}
+.ped-economia { margin-top: 10px; font-size: var(--fs-13); color: var(--ok); }
