@@ -186,7 +186,7 @@ export function ProductDetail({
                 {/* miniaturas só no desktop: no celular o deslize navega e elas
                     roubavam altura útil da dobra */}
                 {produto.fotos.length > 1 ? (
-                  <div className="chrome-desktop" style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
+                  <div className="chrome-desktop--flex" style={{ gap: 10, marginTop: 12, flexWrap: 'wrap' }}>
                     {produto.fotos.map((f, i) => (
                       <button
                         key={f}

@@ -303,7 +303,7 @@ export function BuilderFlow({ inicial }: { inicial?: BuilderState }) {
                 </div>
               ) : null}
 
-              <div className="chrome-desktop" style={{ display: 'flex', gap: 12, alignItems: 'center', borderTop: '1px solid var(--border-1)', paddingTop: 20 }}>
+              <div className="chrome-desktop--flex" style={{ gap: 12, alignItems: 'center', borderTop: '1px solid var(--border-1)', paddingTop: 20 }}>
                 <button type="button" className="erk-btn erk-btn--p" onClick={acaoPasso} disabled={enviando} style={{ flex: '1 1 auto', justifyContent: 'center', gap: 10 }}>
                   {rotuloAcao}
                   <Icon name="seta" size={16} />
