@@ -480,8 +480,11 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
 /* ---------------- chrome: alternância desktop / celular (900px) ---------------- */
 .chrome-desktop { display: block; }
 .chrome-mobile { display: none; }
+/* Para quem precisa ser flex no desktop. Não escreva display no style do
+   elemento: estilo embutido vence a media query e o bloco aparece no celular. */
+.chrome-desktop--flex { display: flex; }
 @media (max-width: 899px) {
-  .chrome-desktop { display: none; }
+  .chrome-desktop, .chrome-desktop--flex { display: none; }
   .chrome-mobile { display: block; }
 }
 
@@ -601,7 +604,10 @@ a, button { -webkit-tap-highlight-color: transparent; touch-action: manipulation
 /* ===================================================================
    pontos de posição das fotos (celular, no lugar das miniaturas)
    =================================================================== */
-.erk-pontos { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+/* Sem display aqui: esta regra vem depois de .chrome-mobile e, com a mesma
+   especificidade, desfaria o display: none do desktop. */
+.erk-pontos { justify-content: center; gap: 6px; margin-top: 12px; }
+@media (max-width: 899px) { .erk-pontos { display: flex; } }
 .erk-pontos span { width: 6px; height: 6px; border-radius: 50%; background: var(--border-2); transition: background 220ms var(--ez), width 220ms var(--ez); }
 .erk-pontos span.is-on { background: var(--tinta); width: 18px; border-radius: 980px; }
 
